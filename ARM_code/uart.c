@@ -68,3 +68,13 @@ void UART_data_write_string (char *string) {
 	}
 
 }
+
+void UART_data_write_nstring (char *string, int length) {
+	
+	int i;
+
+	for (i = 0; i < length; i++) {
+		UART_data_write(string[i]);
+	}
+
+}

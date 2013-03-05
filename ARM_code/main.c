@@ -30,10 +30,10 @@ void lpc_init(){
 
 int main(){
 	int i;
-	Hash pass;
+	char pass[HASH_LENGTH];
 
 	lpc_init();
-
+	memset(pass, 0, HASH_LENGTH);
 	password_length = 0;
 
 	while(1){
@@ -42,7 +42,7 @@ int main(){
 #if DEBUG
 		{
 			UART_data_write_string("password currently set to ");
-			UART_data_write_string(password);
+			UART_data_write_nstring(pass, HASH_LENGTH);
 			UART_data_write_string("\r\n");
 		}
 #endif 
@@ -57,7 +57,7 @@ int main(){
 
 		/* open [password] */
 		if (strncmp(UART_buffer, "open", 4) == 0) { 
-			if (password_length == 0 || checkpass(&pass, UART_buffer + 5, password_length)) {
+			if (password_length == 0 || checkpass(pass, UART_buffer + 6, password_length)) {
 				GPIO0_output_toggle(GPIO_P3);
 				UART_data_write_string("open solenoid activated\r\n");
 		 		for (i = 0; i < 0x0007FFFF; i++) {}
@@ -67,7 +67,7 @@ int main(){
 
 		/* close [password]	*/
 		if (strncmp(UART_buffer, "close", 5) == 0) {
-			if (password_length == 0 ||	checkpass(&pass, UART_buffer + 6, password_length)) {
+			if (password_length == 0 ||	checkpass(pass, UART_buffer + 6, password_length)) {
 				GPIO0_output_toggle(GPIO_P2);
 				UART_data_write_string("close solenoid activated\r\n");
 		 		for (i = 0; i < 0x0007FFFF; i++) {}
@@ -82,7 +82,7 @@ int main(){
 #if DEBUG
 			{
 				UART_data_write_string("password is ");
-				UART_data_write_string(password);
+				UART_data_write_nstring(pass, HASH_LENGTH);
 				UART_data_write_string("password length is ");
 				UART_data_write('0' + (password_length/10));
 				UART_data_write('0' + (password_length%10));
@@ -93,17 +93,17 @@ int main(){
 				UART_data_write_string("password is currently null, setting to ");
 				UART_data_write_string(UART_buffer + 4);
 				UART_data_write_string("\r\n");
-				setpass(&pass, &(UART_buffer[4]));
-				password_length = strlen(&(UART_buffer[4]));
+				setpass(UART_buffer + 4, pass);
+				password_length = strlen(UART_buffer + 4);
 #if DEBUG
 				{
 					UART_data_write_string("password set to ");
-					UART_data_write_string(password);
+					UART_data_write_nstring(pass, HASH_LENGTH);
 					UART_data_write_string("\r\n");
 				}
 #endif
 				UART_data_write_string("password set\r\n");
-			} else if ((UART_buffer[3] == ' ') && checkpass(&pass, UART_buffer + 4, password_length)) {
+			} else if ((UART_buffer[3] == ' ') && checkpass(pass, UART_buffer + 4, password_length)) {
 #if DEBUG
 				{
 					UART_data_write_string("old password matches\r\n");
@@ -121,7 +121,7 @@ int main(){
 
 					UART_data_write_string("new password supplied, changing\r\n");
 
-					setpass(&pass, &(UART_buffer[4 + password_length + 1]));
+					setpass(UART_buffer + 4 + password_length + 1, pass);
 					password_length = strlen(&(UART_buffer[4 + password_length + 1]));
 					UART_buffer[password_length] = '\0';
 					UART_data_write_string("password changed\r\n");

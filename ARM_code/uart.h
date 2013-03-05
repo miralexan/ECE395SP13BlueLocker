@@ -20,5 +20,6 @@ void UART_disable(void);
 #define UART_data_read() (LPC_UART->RBR)
 void UART_data_write(char c);
 void UART_data_write_string(char *string);
+void UART_data_write_nstring(char*, int);
 
 #endif
