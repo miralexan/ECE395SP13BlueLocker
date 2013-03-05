@@ -127,7 +127,7 @@ int main_other(int argc, char *argv[])
         c = fgetc(fp);
         while(!feof(fp))
         {
-            SHA1Input(&sha, &c, 1);
+            SHA1Input(&sha, (const unsigned char *)(&c), 1);
             c = fgetc(fp);
         }
 

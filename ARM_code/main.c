@@ -1,8 +1,5 @@
 #include "io_experiment.h"
 
-#define PASS_SALT "This is a song that gets on everybody's nerves / on everybody's nerves / on everybody's nerves / \
-This is a song that gets on everybody's nerves / and this is how it goes..."
-
 char password[512];
 int password_length;
 
@@ -33,7 +30,7 @@ void lpc_init(){
 
 int main(){
 	int i;
-	SHA1Context pass;
+	Hash pass;
 
 	lpc_init();
 
@@ -53,9 +50,10 @@ int main(){
 		/* below is a test parser */
 
 		/* test */
-		if (strncmp(UART_buffer, "test", 4) == 0) {
-			sha1_test();
-		}
+		//if (strncmp(UART_buffer, "test", 4) == 0) {
+		//	sha1_test();
+		//}
+		/* this is disabled to remove the direct dependency of main on sha1.h */
 
 		/* open [password] */
 		if (strncmp(UART_buffer, "open", 4) == 0) { 
@@ -135,35 +133,5 @@ int main(){
 		UART_interrupt_enable();
 	}
 //	return 0;	
-}
-
-void setpass(SHA1Context *pass_hash, char* pass) {
-
-    SHA1Reset(pass_hash);
-	SHA1Input(pass_hash, PASS_SALT, strlen(PASS_SALT));
-    SHA1Input(pass_hash, (const unsigned char *) pass, strlen(pass));
-	SHA1Result(pass_hash);
-}
-
-int checkpass(SHA1Context *pass_hash, char *string, int length) {
-
-	SHA1Context string_hash; 
-	int i;
-
-    SHA1Reset(&string_hash);
-	SHA1Input(&string_hash, PASS_SALT, strlen(PASS_SALT));
-    SHA1Input(&string_hash, (const unsigned char *) string, length);
-
-    if (!SHA1Result(&string_hash)) {
-        UART_data_write_string("ERROR-- could not compute message digest\r\n");
-		return 0; // false
-    }
-
-    for(i = 0; i < 5 ; i++){
-		if (string_hash.Message_Digest[i] != pass_hash->Message_Digest[i]) { return 0; } // false
-    }
-
-	return 1; // true
-
 }
 
