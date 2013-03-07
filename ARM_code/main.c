@@ -57,7 +57,7 @@ int main(){
 
 		/* open [password] */
 		if (strncmp(UART_buffer, "open", 4) == 0) { 
-			if (password_length == 0 || checkpass(pass, UART_buffer + 6, password_length)) {
+			if (password_length == 0 || checkpass(pass, UART_buffer + 5, password_length)) {
 				GPIO0_output_toggle(GPIO_P3);
 				UART_data_write_string("open solenoid activated\r\n");
 		 		for (i = 0; i < 0x0007FFFF; i++) {}
