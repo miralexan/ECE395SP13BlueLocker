@@ -36,10 +36,8 @@ extern void UART_IRQHandler(){
 			UART_index = 0;
 			UART_done = 1;
 			UART_interrupt_disable();
+			GPIO0_output_toggle(GPIO_P2);
 		}
 		state = 0;
-
 	} 
-
-	GPIO0_output_toggle(GPIO_P4);
 }
