@@ -39,4 +39,22 @@
         android:layout_gravity="center"
         android:src="@android:drawable/stat_sys_data_bluetooth" />
 
+    <Button
+        android:id="@+id/btnOpen"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:padding="5dp"
+        android:text="Open Lock" />
+
+    <Button
+        android:id="@+id/btnClose"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:padding="5dp"
+        android:text="Close Lock" />
+
 </LinearLayout>

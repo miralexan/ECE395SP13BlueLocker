@@ -8,19 +8,15 @@ void lpc_init(){
 	UART_enable();
 
 	GPIO0_dir_output(GPIO_P7);
-
-	GPIO0_interrupt_enable(GPIO_P6);
-
 	GPIO0_dir_output(GPIO_P4);
-
-	GPIO0_output_high(GPIO_P4);
+	GPIO0_dir_output(GPIO_P2);
 
 	GPIO0_dir_input(GPIO_P6); // we don't actually need this
+	GPIO0_interrupt_enable(GPIO_P6);
 
-	GPIO0_dir_output(GPIO_P3);
-	GPIO0_output_high(GPIO_P4);
-	GPIO0_dir_output(GPIO_P2);
-	GPIO0_output_high(GPIO_P4);
+	GPIO0_output_high(GPIO_P7);
+	GPIO0_output_low(GPIO_P4);	
+	GPIO0_output_high(GPIO_P2);
 	
 	GPIO_interrupt_enable();
 	UART_interrupt_enable();
@@ -57,21 +53,21 @@ int main(){
 
 		/* open [password] */
 		if (strncmp(UART_buffer, "open", 4) == 0) { 
-			if (password_length == 0 || checkpass(pass, UART_buffer + 5, password_length)) {
-				GPIO0_output_toggle(GPIO_P3);
+			if (password_length == 0 || checkpass(&pass, UART_buffer + 5, password_length)) {
 				UART_data_write_string("open solenoid activated\r\n");
 		 		for (i = 0; i < 0x0007FFFF; i++) {}
-				GPIO0_output_toggle(GPIO_P3);
+				GPIO0_output_low(GPIO_P7);
+				GPIO0_output_high(GPIO_P4);
 			}
 		}
 
 		/* close [password]	*/
 		if (strncmp(UART_buffer, "close", 5) == 0) {
-			if (password_length == 0 ||	checkpass(pass, UART_buffer + 6, password_length)) {
-				GPIO0_output_toggle(GPIO_P2);
+			if (password_length == 0 ||	checkpass(&pass, UART_buffer + 6, password_length)) {
 				UART_data_write_string("close solenoid activated\r\n");
 		 		for (i = 0; i < 0x0007FFFF; i++) {}
-				GPIO0_output_toggle(GPIO_P2);
+				GPIO0_output_high(GPIO_P7);
+				GPIO0_output_low(GPIO_P4);
 			}
 		}
 
