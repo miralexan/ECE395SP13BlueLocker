@@ -10,7 +10,7 @@
 #define HASH_LENGTH 20
 
 void setpass(char*, char*);
-int checkpass(char*, char*, int);
+int checkpass(char*, char*);
 
 #endif // HASHER_H\
 
