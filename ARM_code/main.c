@@ -36,10 +36,7 @@ int main(){
 	password_state = 0;
 
 	while(1){
-		while (UART_done == 0) {
-			for (i = 0; i < 0x00007FFF; i++) {}
-			UART_data_write('.');
-		}
+		while (UART_done == 0) {}
 
 #if DEBUG
 		{
