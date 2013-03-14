@@ -12,16 +12,12 @@ void lpc_init(){
 
 	GPIO0_dir_output(GPIO_P7);
 	GPIO0_dir_output(GPIO_P4);
-	GPIO0_dir_output(GPIO_P2);
-
-	GPIO0_dir_input(GPIO_P6); // we don't actually need this
-	GPIO0_interrupt_enable(GPIO_P6);
+	GPIO1_dir_output(GPIO_P4);
 
 	GPIO0_output_high(GPIO_P7);
 	GPIO0_output_low(GPIO_P4);	
 	GPIO0_output_high(GPIO_P2);
 	
-	GPIO_interrupt_enable();
 	UART_interrupt_enable();
 	// if we use this often enough, it might be best to make another file
 	//   for interrupt abstraction 
