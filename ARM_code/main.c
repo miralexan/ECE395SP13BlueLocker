@@ -9,6 +9,7 @@ int password_length;
 void lpc_init(){
 	GPIO_enable();
 	UART_enable();
+	SPIO_enable();
 
 	GPIO0_dir_output(GPIO_P7);
 	GPIO0_dir_output(GPIO_P4);
@@ -32,7 +33,9 @@ int main(){
 	password_length = 0;
 
 	while(1){
-		while (UART_done == 0);
+		while (UART_done == 0){
+			SPIO_send();
+		}
 
 #if DEBUG
 		{

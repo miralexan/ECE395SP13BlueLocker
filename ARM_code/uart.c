@@ -22,7 +22,7 @@ void UART_enable(){
 	LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);
 
 	/* Set UART clock division */
-	LPC_SYSCON->UARTCLKDIV = 0x04;	/* divide clock by 1 */
+	LPC_SYSCON->UARTCLKDIV = 0x04;	/* divide clock by 4 */
 
 	/* Set data word length to 8 bits.  Enable division latch access */
 	LPC_UART->LCR |= 0x83;

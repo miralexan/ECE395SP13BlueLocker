@@ -6,6 +6,7 @@
 #include "string.h"
 #include "stdlib.h"
 #include "sha1.h"
+#include "spio.h"
 
 #define DEBUG 1
 
