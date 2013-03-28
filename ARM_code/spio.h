@@ -5,8 +5,8 @@
 
 void SPIO_enable(void);
 
-int SPIO_send(void);
+int SPIO_send(char*, int);
 
-int SPIO_recv(void);
+int SPIO_recv(char*);
 
 #endif

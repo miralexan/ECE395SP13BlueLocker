@@ -41,3 +41,11 @@ extern void UART_IRQHandler(){
 		state = 0;
 	} 
 }
+
+extern void SSP0_IRQHANDLER(){
+	SPIO_index = 0;
+	while(LPC_SSP0->SR & 0x04 != 1){
+		SPIO_buf[SPIO_index++] = (char) (LPC_SSP0->DR & 0x00FF);
+	}
+	SPIO_done = 1;
+}

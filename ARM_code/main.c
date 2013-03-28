@@ -34,7 +34,7 @@ int main(){
 
 	while(1){
 		while (UART_done == 0){
-			SPIO_send();
+			SPIO_send("A", 1);
 		}
 
 #if DEBUG
