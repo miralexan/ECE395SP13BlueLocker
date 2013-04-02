@@ -1,7 +1,9 @@
 #include "spio.h"
+#include "string.h"
 
-extern char SPIO_buff[512];
-extern int SPIO_done = 0;
+char SPIO_buff[512];
+int SPIO_done = 0;
+int SPIO_index = 0;
 
 void SPIO_enable(void){
 	LPC_SYSCON->SYSAHBCLKCTRL |= (1UL << 16);
@@ -48,7 +50,7 @@ int SPIO_send(char* buf, int size){
 int SPIO_recv(char* buf){
 
 	while(!SPIO_done);
-	memset(buf, SPIO_buf, SPIO_index);
+	memcpy(buf, SPIO_buff, SPIO_index);
 	SPIO_done = 0;
 	SPIO_index = 0;
 	LPC_SSP0->ICR |= 0x02;

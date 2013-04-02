@@ -3,6 +3,10 @@
 
 #include "LPC11xx.h"
 
+extern char SPIO_buff[];
+extern int SPIO_done;
+extern int SPIO_index;
+
 void SPIO_enable(void);
 
 int SPIO_send(char*, int);

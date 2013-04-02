@@ -49,7 +49,9 @@ int main(){
 
 		/* test */
 		if (strncmp(UART_buffer, "test", 4) == 0) {
-			sha1_test();
+			char buf[16];
+			write_storage("Hello World, duh", 16, 0);
+			read_storage(buf, 16);
 		}
 
 		/* open [password] */
