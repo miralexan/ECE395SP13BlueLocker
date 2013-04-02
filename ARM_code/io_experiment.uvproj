@@ -456,6 +456,16 @@
               <FileType>5</FileType>
               <FilePath>.\storage.h</FilePath>
             </File>
+            <File>
+              <FileName>hasher.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\hasher.c</FilePath>
+            </File>
+            <File>
+              <FileName>hasher.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\hasher.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
