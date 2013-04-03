@@ -1,11 +1,12 @@
 #include "storage.h"
 #include "string.h"
-#include "stdlib.h"
+//#include "stdlib.h"
 
 int read_storage(char* buff, int length, char address){
-	char* cmd;
-	cmd = (char*) malloc((length+2)*sizeof(char));
-	memset(cmd, 0, length+2);
+	char cmd[258];
+//	char* cmd;
+//	cmd = (char*) malloc((length+2)*sizeof(char));
+	memset(cmd, 0, 258);
 
 	cmd[0] = (char) CMD_READ;
 	cmd[1] = (char) address;
@@ -15,26 +16,31 @@ int read_storage(char* buff, int length, char address){
 	return SPIO_recv(buff);
 }
 
-/* Currently assumes writing a full page at a time */
+/* Currently assumes writing a full page at a time, and that address are page-aligned */
 int write_storage(char* buff, int length, char address){
-	char* cmd;
+//char* cmd;
+	char cmd[18];
 
-	if(length < 0 || length >= 256){
+	if(length < 0 || length > 255){
 		return -1;
+	}
+	
+	if(length == 0){
+		return 0;
 	}
 
 	if(length % 16 != 0 || address % 16 != 0){
 		return -1;
 	}
 
-	cmd = (char*) malloc(18*sizeof(char));
-	strncpy(cmd+2, buff, length);
+//	cmd = (char*) malloc(18*sizeof(char));
+//	strncpy(cmd+2, buff, length);
 
 	cmd[0] = (char) CMD_WREN;
 	SPIO_send(cmd, 1);
 
 	cmd[0] = (char) CMD_WRITE;
-	switch(length / 16){
+	switch((length-1) / 16){
 		case 15: cmd[1] = (char) address + 240;
 				 strncpy(cmd+2, buff+240, 16); 
 				 SPIO_send(cmd, 18);
@@ -86,7 +92,7 @@ int write_storage(char* buff, int length, char address){
 	}
 	cmd[0] = (char) CMD_WRDI;
 	SPIO_send(cmd, 1);
-	free(cmd);
+//	free(cmd);
 
 	return 0;
 }
