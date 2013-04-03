@@ -47,8 +47,10 @@ int main(){
 		/* test */
 		if (strncmp(UART_buffer, "test", 4) == 0) {
 			char buf[16];
+			memset(buf, 0, 16);
 			write_storage("Hello World, duh", 16, 0);
-			read_storage(buf, 16);
+			read_storage(buf, 16, 0);		   
+			UART_data_write_nstring(buf, 16); 
 		}
 
 		if (password_state == 1) {

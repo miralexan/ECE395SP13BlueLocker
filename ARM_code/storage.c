@@ -2,13 +2,15 @@
 #include "string.h"
 #include "stdlib.h"
 
-int read_storage(char* buff, char address){
-	char cmd[2];
+int read_storage(char* buff, int length, char address){
+	char* cmd;
+	cmd = (char*) malloc((length+2)*sizeof(char));
+	memset(cmd, 0, length+2);
 
 	cmd[0] = (char) CMD_READ;
 	cmd[1] = (char) address;
 
-	SPIO_send(cmd, 2);
+	SPIO_send(cmd, length+2);
 
 	return SPIO_recv(buff);
 }

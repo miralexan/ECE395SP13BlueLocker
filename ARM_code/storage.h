@@ -12,7 +12,7 @@
 
 #define BASE_ADDR 0x00
 
-int read_storage(char*, char);
+int read_storage(char*, int, char);
 int write_storage(char*, int, char);
 
 #endif
