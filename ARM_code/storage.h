@@ -12,7 +12,15 @@
 
 #define BASE_ADDR 0x00
 
+#define STATUS_WIP 0x01
+#define STATUS_WEL 0x02
+#define STATUS_BP0 0x04
+#define STATUS_BP1 0x08
+
 int read_storage(char*, int, char);
 int write_storage(char*, int, char);
+int storage_write_enable(void);
+int storage_read_status(char);
+
 
 #endif
