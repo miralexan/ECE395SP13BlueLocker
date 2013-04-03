@@ -20,103 +20,125 @@ int read_storage(char* buff, int length, char address){
 int write_storage(char* buff, int length, char address){
 //char* cmd;
 	char cmd[18];
+	int start_page, end_page, start_len, end_len, send;
+	
+	start_page = end_page = start_len = end_len = send = 0;
 
-	if(length < 0 || length > 255){
+	if(length <= 0 || length > 255){
+		return -1;
+	} else if(length + address > 256){
 		return -1;
 	}
 	
-	if(length == 0){
-		return 0;
-	}
-
 	if(length % 16 != 0 || address % 16 != 0){
 		return -1;
 	}
+	
+	start_page = address/16;
+	end_page = (length+address-1)/16;
+	start_len = (start_page+1)*16-address;
+	end_len = 16-start_len;
 
 //	cmd = (char*) malloc(18*sizeof(char));
 //	strncpy(cmd+2, buff, length);
 
 	cmd[0] = (char) CMD_WRITE;
 	switch((length-1) / 16){
-		case 15: cmd[1] = (char) address + 240;
-				 strncpy(cmd+2, buff+240, 16);
+		case 15: cmd[1] = (char) (start_page+15)*16;
+				 send = (end_page == 15 ? end_len : 16);
+				 strncpy(cmd+2, buff+start_len+224, send);
 				 storage_write_enable();
-				 SPIO_send(cmd, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
-		case 14: cmd[1] = (char) address + 224;
-				 strncpy(cmd+2, buff+224, 16);
+		case 14: cmd[1] = (char) (start_page+14)*16;
+				 send = (end_page == 14 ? end_len : 16);
+				 strncpy(cmd+2, buff+start_len+208, send);
 				 storage_write_enable();
-				 SPIO_send(cmd, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
-		case 13: cmd[1] = (char) address + 208;
-				 strncpy(cmd+2, buff+208, 16);
+		case 13: cmd[1] = (char) (start_page+13)*16;
+				 send = (end_page == 13 ? end_len : 16);
+				 strncpy(cmd+2, buff+start_len+192, send);
 				 storage_write_enable();
-				 SPIO_send(buff + 208, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
-		case 12: cmd[1] = (char) address + 192;
-				 strncpy(cmd+2, buff+192, 16);
+		case 12: cmd[1] = (char) (start_page+12)*16;
+				 send = (end_page == 12 ? end_len : 16);
+				 strncpy(cmd+2, buff+start_len+176, send);
 				 storage_write_enable();
-				 SPIO_send(buff + 192, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
-		case 11: cmd[1] = (char) address + 176;
-				 strncpy(cmd+2, buff+176, 16);
+		case 11: cmd[1] = (char) (start_page+11)*16;
+				 send = (end_page == 11 ? end_len : 16);
+				 strncpy(cmd+2, buff+start_len+160, send);
 				 storage_write_enable();
-				 SPIO_send(buff + 176, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
-		case 10: cmd[1] = (char) address + 160;
-				 strncpy(cmd+2, buff+160, 16);
+		case 10: cmd[1] = (char) (start_page+10)*16;
+				 send = (end_page == 10 ? end_len : 16);
+				 strncpy(cmd+2, buff+start_len+144, send);
 				 storage_write_enable();
-				 SPIO_send(buff + 160, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
-		case  9: cmd[1] = (char) address + 144;
-				 strncpy(cmd+2, buff+144, 16);
+		case  9: cmd[1] = (char) (start_page+9)*16;
+				 send = (end_page == 9 ? end_len : 16);
+				 strncpy(cmd+2, buff+start_len+128, send);
 				 storage_write_enable();
-				 SPIO_send(buff + 144, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
-		case  8: cmd[1] = (char) address + 128;
-				 strncpy(cmd+2, buff+128, 16);
+		case  8: cmd[1] = (char) (start_page+8)*16;
+				 send = (end_page == 8 ? end_len : 16);
+				 strncpy(cmd+2, buff+start_len+112, send);
 				 storage_write_enable();
-				 SPIO_send(buff + 128, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
-		case  7: cmd[1] = (char) address + 112;
-				 strncpy(cmd+2, buff+112, 16);
+		case  7: cmd[1] = (char) (start_page+7)*16;
+				 send = (end_page == 7 ? end_len : 16);
+				 strncpy(cmd+2, buff+start_len+96, send);
 				 storage_write_enable();
-				 SPIO_send(buff + 112, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
-		case  6: cmd[1] = (char) address + 96;
-				 strncpy(cmd+2, buff+96, 16);
+		case  6: cmd[1] = (char) (start_page+6)*16;
+				 send = (end_page == 6 ? end_len : 16);
+				 strncpy(cmd+2, buff+start_len+80, send);
 				 storage_write_enable();
-				 SPIO_send(buff + 96, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
-		case  5: cmd[1] = (char) address + 80;
-				 strncpy(cmd+2, buff+80, 16);
+		case  5: cmd[1] = (char) (start_page+5)*16;
+				 send = (end_page == 5 ? end_len : 16);
+				 strncpy(cmd+2, buff+start_len+64, send);
 				 storage_write_enable();
-				 SPIO_send(buff + 80, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
-		case  4: cmd[1] = (char) address + 64;
-				 strncpy(cmd+2, buff+64, 16);
+		case  4: cmd[1] = (char) (start_page+4)*16;
+				 send = (end_page == 4 ? end_len : 16);
+				 strncpy(cmd+2, buff+start_len+48, 16);
 				 storage_write_enable();
-				 SPIO_send(buff + 64, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
-		case  3: cmd[1] = (char) address + 48;
-				 strncpy(cmd+2, buff+48, 16);
+		case  3: cmd[1] = (char) (start_page+3)*16;
+				 send = (end_page == 3 ? end_len : 16);
+				 strncpy(cmd+2, buff+start_len+32, send);
 				 storage_write_enable();
-				 SPIO_send(buff + 48, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
-		case  2: cmd[1] = (char) address + 32;
-				 strncpy(cmd+2, buff+32, 16);
+		case  2: cmd[1] = (char) (start_page+2)*16;
+				 send = (end_page == 2 ? end_len : 16);
+				 strncpy(cmd+2, buff+start_len+16, send);
 				 storage_write_enable();
-				 SPIO_send(buff + 32, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
-		case  1: cmd[1] = (char) address + 16;
-				 strncpy(cmd+2, buff+16, 16);
+		case  1: cmd[1] = (char) (start_page+1)*16;
+				 send = (end_page == 1 ? end_len : 16);
+				 strncpy(cmd+2, buff+start_len, send);
 				 storage_write_enable();
-				 SPIO_send(buff + 16, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
 		case  0: cmd[1] = (char) address;
-				 strncpy(cmd+2, buff, 16);
+				 send = (start_page == end_page ? length : start_len);
+				 strncpy(cmd+2, buff, send);
 				 storage_write_enable();
-				 SPIO_send(buff, 18);
+				 SPIO_send(cmd, send + 2);
 				 while(storage_read_status(STATUS_WIP));
 	}
 //	free(cmd);
