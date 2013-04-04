@@ -151,7 +151,7 @@ int storage_read_status(char mask){
 	char cmd[2];
 	
 	cmd[0] = CMD_RDSR;
-	if ((LPC_SSP0->SR & 0x04) != 0) {
+	if (SPIO_RNE()) {
 		UART_data_write_string("Buffer does not start empty in storage_write_enable()\r\n");
 	}
 	SPIO_send(cmd, 2);
@@ -160,7 +160,7 @@ int storage_read_status(char mask){
 	UART_data_write(cmd[0]);
 	UART_data_write_string("'\r\n");
 	SPIO_recv(cmd, 1);
-	if ((LPC_SSP0->SR & 0x04) != 0) {
+	if (SPIO_RNE()) {
 		UART_data_write_string("Buffer not empty in storage_read_status()\r\n");
 	}
 	return (int) cmd[0] & mask;
@@ -169,7 +169,7 @@ int storage_read_status(char mask){
 int storage_write_enable(void){
 
 	char cmd = CMD_WREN;
-	if ((LPC_SSP0->SR & 0x04) != 0) {
+	if (SPIO_RNE()) {
 		UART_data_write_string("Buffer does not start empty in storage_write_enable()\r\n");
 	}
 	SPIO_send(&cmd, 1);
@@ -178,7 +178,7 @@ int storage_write_enable(void){
 	UART_data_write(cmd);
 	UART_data_write_string("'\r\n");
 
-	while ((LPC_SSP0->SR & 0x04) != 0) {
+	while (SPIO_RNE()) {
 		UART_data_write_string("Buffer not empty in storage_write_enable()\r\n");
 		UART_data_write_string("Extra data is '");
 		SPIO_recv(&cmd, 1);
