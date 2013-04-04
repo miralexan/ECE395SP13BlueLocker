@@ -2,6 +2,7 @@
 #define __STORAGE_H__
 
 #include "spio.h"
+#include "uart.h"
 
 #define CMD_READ 0x03
 #define CMD_WRITE 0x02

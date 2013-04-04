@@ -1,5 +1,4 @@
 #include "spio.h"
-#include "string.h"
 
 char SPIO_buff[512];
 int SPIO_done = 0;
@@ -28,11 +27,15 @@ void SPIO_enable(void){
 
 	LPC_SYSCON->PRESETCTRL  |= 0x01;
 
-	LPC_SSP0->CR0 = 0xFFC7;
+	LPC_SSP0->CR0 = 0x0007;
 	LPC_SSP0->CR1 |= 0x02;
-	LPC_SSP0->CPSR = 0x02;
+	LPC_SSP0->CPSR = 0x04;
 
-	while(LPC_SSP0->SR & 0x04 == 1){
+	UART_data_write_string("SSP0->SR: 0x");
+	UART_data_write(LPC_SSP0->SR & 0x0FF);
+	UART_data_write_string("\r\n");
+
+	while((LPC_SSP0->SR & 0x04) != 0){
 		int tmp = LPC_SSP0->DR;
 	}
 }
@@ -47,14 +50,16 @@ int SPIO_send(char* buf, int size){
 	return 0;
 }
 
-int SPIO_recv(char* buf){
-
-	while(!SPIO_done);
-	memcpy(buf, SPIO_buff, SPIO_index);
-	SPIO_done = 0;
-	SPIO_index = 0;
-	LPC_SSP0->ICR |= 0x02;
-
+int SPIO_recv(char* buf, int length){
+	int i;
+//	while(!SPIO_done);
+//	memcpy(buf, SPIO_buff, SPIO_index);
+//	SPIO_done = 0;
+//	SPIO_index = 0;
+//	LPC_SSP0->ICR |= 0x02;
+	for(i = 0; i < length; i++){
+		buf[i] = (char) LPC_SSP0->DR;
+	}
  	return SPIO_index;
 }
 

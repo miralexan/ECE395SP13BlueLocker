@@ -13,7 +13,9 @@ int read_storage(char* buff, int length, char address){
 
 	SPIO_send(cmd, length+2);
 
-	return SPIO_recv(buff);
+	UART_data_write_string("Now trying to receive...\r\n");
+
+	return SPIO_recv(buff, length);
 }
 
 int write_storage(char* buff, int length, unsigned char address){
@@ -149,15 +151,40 @@ int storage_read_status(char mask){
 	char cmd[2];
 	
 	cmd[0] = CMD_RDSR;
+	if ((LPC_SSP0->SR & 0x04) != 0) {
+		UART_data_write_string("Buffer does not start empty in storage_write_enable()\r\n");
+	}
 	SPIO_send(cmd, 2);
-	SPIO_recv(cmd);
-	
+	SPIO_recv(cmd, 1);
+	UART_data_write_string("Discarding '");
+	UART_data_write(cmd[0]);
+	UART_data_write_string("'\r\n");
+	SPIO_recv(cmd, 1);
+	if ((LPC_SSP0->SR & 0x04) != 0) {
+		UART_data_write_string("Buffer not empty in storage_read_status()\r\n");
+	}
 	return (int) cmd[0] & mask;
 }
 
 int storage_write_enable(void){
+
 	char cmd = CMD_WREN;
+	if ((LPC_SSP0->SR & 0x04) != 0) {
+		UART_data_write_string("Buffer does not start empty in storage_write_enable()\r\n");
+	}
 	SPIO_send(&cmd, 1);
+	SPIO_recv(&cmd, 1);
+	UART_data_write_string("Discarding '");
+	UART_data_write(cmd);
+	UART_data_write_string("'\r\n");
+
+	while ((LPC_SSP0->SR & 0x04) != 0) {
+		UART_data_write_string("Buffer not empty in storage_write_enable()\r\n");
+		UART_data_write_string("Extra data is '");
+		SPIO_recv(&cmd, 1);
+ 		UART_data_write(cmd);
+		UART_data_write_string("'\r\n");
+	}
 	
 	// TODO: ensure write enable latch is clear
 	return 0;

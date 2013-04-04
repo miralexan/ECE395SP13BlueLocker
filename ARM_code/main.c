@@ -17,10 +17,11 @@ void lpc_init(){
 	GPIO0_output_high(GPIO_P7);
 	GPIO0_output_low(GPIO_P4);	
 	GPIO0_output_high(GPIO_P2);
-	
+
 	UART_interrupt_enable();
 	// if we use this often enough, it might be best to make another file
 	//   for interrupt abstraction 
+	
 }
 
 int main(){
@@ -46,11 +47,17 @@ int main(){
 		
 		/* test */
 		if (strncmp(UART_buffer, "test", 4) == 0) {
-			char buf[16];
-			memset(buf, 0, 16);
-			write_storage("Hello World, duh", 16, 0);
-			read_storage(buf, 16, 0);		   
-			UART_data_write_nstring(buf, 16); 
+			char buf[18];
+			memset(buf, 'a', 16);
+			buf[16] = '\r';
+			buf[17] = '\n';
+			storage_write_enable();
+			buf[0] = (char) storage_read_status(0xFF);
+			//write_storage("Hello World, duh", 16, 0);
+			/*UART_data_write_string("We got this far...\r\n");*/
+			//read_storage(buf, 16, 0);		   
+			UART_data_write_nstring(buf, 18);
+			//SPIO_send("AAAAAAAAAAAAAAAAAAAAAAAAA", 25);
 		}
 
 		if (password_state == 1) {

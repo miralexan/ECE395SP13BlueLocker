@@ -43,6 +43,7 @@ extern void UART_IRQHandler(){
 }
 
 extern void SSP0_IRQHANDLER(){
+	UART_data_write_string("SPP0 Interrupt Called\r\n");
 	SPIO_index = 0;
 	while(LPC_SSP0->SR & 0x04 != 1){
 		SPIO_buff[SPIO_index++] = (char) (LPC_SSP0->DR & 0x00FF);
