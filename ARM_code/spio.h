@@ -21,4 +21,6 @@ int SPIO_send(char*, int);
 
 int SPIO_recv(char*, int);
 
+void SPIO_flush(void);
+
 #endif

@@ -19,9 +19,6 @@ void lpc_init(){
 	GPIO0_output_high(GPIO_P2);
 
 	UART_interrupt_enable();
-	// if we use this often enough, it might be best to make another file
-	//   for interrupt abstraction 
-	
 }
 
 int main(){
@@ -47,18 +44,13 @@ int main(){
 		
 		/* test */
 		if (strncmp(UART_buffer, "test", 4) == 0) {
-			char buf[18];
-			memset(buf, 'a', 16);
-			buf[16] = '\r';
-			buf[17] = '\n';
-//			buf[0] = (char) storage_read_status(0xFF);
-//			storage_write_enable();
-//			buf[1] = (char) storage_read_status(0xFF);			
-			/*UART_data_write_string("We got this far...\r\n");*/
-			write_storage("Hello World, bub", 16, 0);
-			read_storage(buf, 16, 0);		   
-			UART_data_write_nstring(buf, 18);
-			//SPIO_send("AAAAAAAAAAAAAAAAAAAAAAAAA", 25);
+			char buf[42];
+			memset(buf, 'a', 42);
+			buf[40] = '\r';
+			buf[41] = '\n';
+			write_storage("Hello World, bub. Nice of you to join us", 40, 0);
+			read_storage(buf, 40, 0);		   
+			UART_data_write_nstring(buf, 42);
 		}
 
 		if (password_state == 1) {

@@ -7,6 +7,7 @@ int SPIO_index = 0;
 void SPIO_enable(void){
 	LPC_SYSCON->SYSAHBCLKCTRL |= (1UL << 16);
 
+	// Set SSP output pins
 	LPC_IOCON->PIO0_2 &= ~0x07;
 	LPC_IOCON->PIO0_2 |= 0x01;
 
@@ -21,24 +22,33 @@ void SPIO_enable(void){
 
 	LPC_IOCON->SCK_LOC |= 0x02;
 
+	// Enable SSP0 clock
 	LPC_SYSCON->SYSAHBCLKCTRL |= (1UL << 11);
 
+	// Set SSP0 clock division
 	LPC_SYSCON->SSP0CLKDIV = 0x04;
 
 	LPC_SYSCON->PRESETCTRL  |= 0x01;
 
+	// Set the SSP0 attributes:
+	//   DSS: 8 bits
+	//   FRF: SPI
+	//   CPOL: 1
+	//   CPHA: 1
+	//   SCR: 0
+	// 	 LBM: Disabled
+	//   SPI Enable: True
+	//   M/S: Master
+	//   SOD: N/A
+	//   CPS: 4
 	LPC_SSP0->CR0 = 0x00C7;
 	LPC_SSP0->CR1 |= 0x02;
 	LPC_SSP0->CPSR = 0x04;
 
-	UART_data_write_string("SSP0->SR: 0x");
-	UART_data_write(LPC_SSP0->SR & 0x0FF);
-	UART_data_write_string("\r\n");
-
+    // Empty any data in the receive FIFO
 	while(SPIO_RNE()){
 		int tmp = LPC_SSP0->DR;
-	}
-	
+	}	
 }
 
 int SPIO_send(char* buf, int size){
@@ -51,7 +61,7 @@ int SPIO_send(char* buf, int size){
 		while(!SPIO_TNF());
 		LPC_SSP0->DR = *(buf+i);
 		// Pull any data out of the receive FIFO
-		while(SPIO_RNE()){
+		if(SPIO_RNE()){
 			SPIO_buff[SPIO_index++] = (char) (LPC_SSP0->DR & 0x0FF);
 		}
 		i += 1;
@@ -66,21 +76,19 @@ int SPIO_send(char* buf, int size){
 }
 
 int SPIO_recv(char* buf, int length){
-//	int i;
-//	while(!SPIO_done);
-	memcpy(buf, SPIO_buff+SPIO_read, length);
+	int to_read = 0;
+	int buff_size = SPIO_index-SPIO_read;
+
+	to_read = (length > buff_size ? buff_size : length);
+	memcpy(buf, SPIO_buff+SPIO_read, to_read);
 	SPIO_read += length;
 	if(SPIO_read == SPIO_index){
 		SPIO_read = SPIO_index = 0;
 	}
-//	SPIO_done = 0;
-//	SPIO_index = 0;
-//	LPC_SSP0->ICR |= 0x02;
-//	while(SPIO_BSY());
-//	for(i = 0; i < length; i++){
-//		buf[i] = (char) (LPC_SSP0->DR & 0x0FF);
-//	}
- 	return SPIO_index;
+ 	return to_read;
 }
 
+void SPIO_flush(void){
+	SPIO_read = SPIO_index = 0;
+}
 

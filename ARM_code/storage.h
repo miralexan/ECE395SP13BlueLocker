@@ -11,8 +11,6 @@
 #define CMD_RDSR 0x05
 #define CMD_WRSR 0x01
 
-#define BASE_ADDR 0x00
-
 #define STATUS_WIP 0x01
 #define STATUS_WEL 0x02
 #define STATUS_BP0 0x04
