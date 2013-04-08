@@ -51,11 +51,12 @@ int main(){
 			memset(buf, 'a', 16);
 			buf[16] = '\r';
 			buf[17] = '\n';
-			storage_write_enable();
-			buf[0] = (char) storage_read_status(0xFF);
-			//write_storage("Hello World, duh", 16, 0);
+//			buf[0] = (char) storage_read_status(0xFF);
+//			storage_write_enable();
+//			buf[1] = (char) storage_read_status(0xFF);			
 			/*UART_data_write_string("We got this far...\r\n");*/
-			//read_storage(buf, 16, 0);		   
+			write_storage("Hello World, bub", 16, 0);
+			read_storage(buf, 16, 0);		   
 			UART_data_write_nstring(buf, 18);
 			//SPIO_send("AAAAAAAAAAAAAAAAAAAAAAAAA", 25);
 		}
