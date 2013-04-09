@@ -211,7 +211,7 @@ public class MainActivity extends Activity {
 		openLock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String tempS = "open\r";
+				String tempS = "open\r\n";
 				connectedThread.write(tempS.getBytes());
 			}
 		});
@@ -219,7 +219,7 @@ public class MainActivity extends Activity {
 		closeLock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String tempS = "close\r";
+				String tempS = "close\r\n";
 				connectedThread.write(tempS.getBytes());
 			}
 		});
