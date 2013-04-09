@@ -8,6 +8,7 @@
 #include "spio.h"
 #include "storage.h"
 #include "hasher.h"
+#include "password.h"
 
 #define DEBUG 1
 

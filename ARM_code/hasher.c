@@ -4,7 +4,7 @@
 //#define PASS_SALT "This is a song that gets on everybody's nerves / on everybody's nerves / on everybody's nerves / \
 //This is a song that gets on everybody's nerves / and this is how it goes..."
 
-void setpass(char* pass_in, char* pass_out) {
+void hashpass(char* pass_in, char* pass_out) {
 	SHA1Context pass_hash;
     SHA1Reset(&pass_hash);
 //	SHA1Input(&pass_hash, PASS_SALT, strlen(PASS_SALT));
@@ -13,7 +13,7 @@ void setpass(char* pass_in, char* pass_out) {
 	memcpy((char*)pass_out, (char*)pass_hash.Message_Digest, HASH_LENGTH);
 }
 
-int checkpass(char *pass_hash, char *string) {
+int checkhash(char *pass_hash, char *string) {
 //	int i;
 //	char string_hash[HASH_LENGTH];
 	SHA1Context string_hash;
