@@ -54,6 +54,12 @@ void SPIO_enable(void){
 int SPIO_send(char* buf, int size){
 	int i = 0;
 
+	if (((SPIO_index >= SPIO_read) ? (SPIO_read + 512) : (SPIO_read))
+		<= SPIO_index + size) {
+
+		return -1;
+	}
+
 	// Wait until any previous operations complete
 	while(SPIO_BSY());
 	while(i < size){
@@ -63,6 +69,7 @@ int SPIO_send(char* buf, int size){
 		// Pull any data out of the receive FIFO
 		if(SPIO_RNE()){
 			SPIO_buff[SPIO_index++] = (char) (LPC_SSP0->DR & 0x0FF);
+			SPIO_index %= 512;
 		}
 		i += 1;
 	}
@@ -70,6 +77,7 @@ int SPIO_send(char* buf, int size){
 	while(SPIO_BSY() || SPIO_RNE()){
 		if(SPIO_RNE()){
 			SPIO_buff[SPIO_index++] = (char) (LPC_SSP0->DR & 0x0FF);
+			SPIO_index %= 512;
 		}
 	}
 	return 0;
@@ -77,18 +85,21 @@ int SPIO_send(char* buf, int size){
 
 int SPIO_recv(char* buf, int length){
 	int to_read = 0;
-	int buff_size = SPIO_index-SPIO_read;
+	int buff_size = ((SPIO_index > SPIO_read) ? (SPIO_index) : (SPIO_index + 512)) - SPIO_read;
 
 	to_read = (length > buff_size ? buff_size : length);
-	memcpy(buf, SPIO_buff+SPIO_read, to_read);
+	if (SPIO_read + length <= 512) {
+		memcpy(buf, SPIO_buff+SPIO_read, to_read);
+	} else {
+		memcpy(buf, SPIO_buff + SPIO_read, 512 - SPIO_read);
+		memcpy(buf + (512 - SPIO_read), SPIO_buff, (SPIO_read + length - 512));
+	} 
 	SPIO_read += length;
-	if(SPIO_read == SPIO_index){
-		SPIO_read = SPIO_index = 0;
-	}
+	SPIO_read %= 512;
  	return to_read;
 }
 
 void SPIO_flush(void){
-	SPIO_read = SPIO_index = 0;
+	SPIO_read = SPIO_index;
 }
 

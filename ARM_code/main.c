@@ -44,13 +44,28 @@ int main(){
 		
 		/* test */
 		if (strncmp(UART_buffer, "test", 4) == 0) {
-			char buf[42];
-			memset(buf, 'a', 42);
-			buf[40] = '\r';
-			buf[41] = '\n';
-			write_storage("Hello World, bub. Nice of you to join us", 40, 0);
-			read_storage(buf, 40, 0);		   
-			UART_data_write_nstring(buf, 42);
+			char buf[142];
+			memset(buf, 'a', 142);
+			buf[140] = '\r';
+			buf[141] = '\n';
+			write_storage("12312342321323451678653421abcd\r\n", 32, 0);
+			write_storage("12312342321323451678653421abcd\r\n", 32, 32);
+			write_storage("12312342321323451678653421abcd\r\n", 32, 64);
+			write_storage("12312342321323451678653421abcd\r\n", 32, 96);
+			write_storage("12312342321323451678653421abcd\r\n", 32, 128);
+			write_storage("12312342321323451678653421abcd\r\n", 32, 160);
+			write_storage("12312342321323451678653421abcd\r\n", 32, 192);
+			write_storage("12312342321323451678653421abcd\r\n", 32, 224);
+			read_storage(buf, 140, 0);	   
+			UART_data_write_nstring(buf, 142);
+			read_storage(buf, 140, 50);	   
+			UART_data_write_nstring(buf, 142);
+			read_storage(buf, 140, 70);	   
+			UART_data_write_nstring(buf, 142);
+			read_storage(buf, 140, 30);	   
+			UART_data_write_nstring(buf, 142);
+			read_storage(buf, 140, 11);	   
+			UART_data_write_nstring(buf, 142);
 		}
 
 		if (password_state == 1) {
