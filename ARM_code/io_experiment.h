@@ -13,9 +13,9 @@
 #define DEBUG 1
 
 void test(void);
-void set_step_2(void);
-void open(void);
-void close(void);
-void set_step_1(void);
+void set_step_2(char*);
+void open(char*);
+void close(char*);
+void set_step_1(char*);
 
 #endif

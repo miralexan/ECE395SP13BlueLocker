@@ -85,16 +85,16 @@ int SPIO_send(char* buf, int size){
 
 int SPIO_recv(char* buf, int length){
 	int to_read = 0;
-	int buff_size = ((SPIO_index > SPIO_read) ? (SPIO_index) : (SPIO_index + 512)) - SPIO_read;
+	int buff_size = ((SPIO_index >= SPIO_read) ? (SPIO_index) : (512 + SPIO_index)) - SPIO_read;
 
 	to_read = (length > buff_size ? buff_size : length);
-	if (SPIO_read + length <= 512) {
+	if (SPIO_read + to_read <= 512) {
 		memcpy(buf, SPIO_buff+SPIO_read, to_read);
 	} else {
 		memcpy(buf, SPIO_buff + SPIO_read, 512 - SPIO_read);
-		memcpy(buf + (512 - SPIO_read), SPIO_buff, (SPIO_read + length - 512));
+		memcpy(buf + (512 - SPIO_read), SPIO_buff, (SPIO_read + to_read - 512));
 	} 
-	SPIO_read += length;
+	SPIO_read += to_read;
 	SPIO_read %= 512;
  	return to_read;
 }

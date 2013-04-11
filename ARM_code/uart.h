@@ -8,6 +8,7 @@
 
 #include "LPC11xx.h"
 #include "string.h"
+#include "flags.h"
 
 extern int UART_done;
 extern char UART_buffer[];

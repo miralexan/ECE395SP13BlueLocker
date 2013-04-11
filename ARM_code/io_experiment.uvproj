@@ -471,6 +471,11 @@
               <FileType>5</FileType>
               <FilePath>.\password.h</FilePath>
             </File>
+            <File>
+              <FileName>flags.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\flags.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -55,17 +55,22 @@ void UART_disable() {
  *----------------------------------------------------------------------------*/
 int UART_recv(char* buff, int length){
 	int to_read = 0;
-	int buff_size = ((UART_index > UART_read) ? (UART_index) : (UART_index + 512)) - UART_read;
+	int buff_size;
+
+	while(!UART_done);
+
+	buff_size = ((UART_index > UART_read) ? (UART_index) : (512 + UART_index)) - UART_read;	
 
 	to_read = (length > buff_size ? buff_size : length);
-	if (UART_read + length <= 512) {
+	if (UART_read + to_read <= 512) {
 		memcpy(buff, UART_buffer+UART_read, to_read);
 	} else {
 		memcpy(buff, UART_buffer + UART_read, 512 - UART_read);
-		memcpy(buff + (512 - UART_read), UART_buffer, (UART_read + length - 512));
+		memcpy(buff + (512 - UART_read), UART_buffer, (UART_read + to_read - 512));
 	} 
-	UART_read += length;
+	UART_read += to_read;
 	UART_read %= 512;
+	UART_done = 0;
  	return to_read;
 }
 
@@ -87,7 +92,7 @@ void UART_data_write_string (char *string) {
 
 }
 
-void UART_data_write_nstring (char *string, int length) {
+void UART_send(char *string, int length) {
 	
 	int i;
 
@@ -113,7 +118,7 @@ extern void UART_IRQHandler(){
 			UART_data_write_string("I totally see a newline!\r\n");
 #endif
 
-			UART_buffer[(UART_index == 1 ? 511 : UART_index-2)] = '\0';
+			UART_buffer[(UART_index <= 1 ? 510 + UART_index : UART_index-2)] = '\0';
 #if DEBUG
 			{
 				UART_data_write_string("I see \"");
@@ -121,7 +126,7 @@ extern void UART_IRQHandler(){
 				UART_data_write_string("\"!\r\n");
 			}
 #endif
-			UART_index = 0;
+			UART_index = (UART_index == 0) ? 511 : (UART_index - 1);
 			UART_done = 1;
 			UART_interrupt_disable();
 			//GPIO1_output_toggle(GPIO_P4);
