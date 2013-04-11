@@ -12,4 +12,10 @@
 
 #define DEBUG 1
 
+void test(void);
+void set_step_2(void);
+void open(void);
+void close(void);
+void set_step_1(void);
+
 #endif
