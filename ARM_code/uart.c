@@ -3,6 +3,8 @@
 int UART_done = 0;
 char UART_buffer[512];
 int UART_index = 0;
+int UART_read = 0;
+static int state = 0;
 
 void UART_enable(){
 
@@ -51,6 +53,22 @@ void UART_disable() {
 /*----------------------------------------------------------------------------
   Write character to Serial Port
  *----------------------------------------------------------------------------*/
+int UART_recv(char* buff, int length){
+	int to_read = 0;
+	int buff_size = ((UART_index > UART_read) ? (UART_index) : (UART_index + 512)) - UART_read;
+
+	to_read = (length > buff_size ? buff_size : length);
+	if (UART_read + length <= 512) {
+		memcpy(buff, UART_buffer+UART_read, to_read);
+	} else {
+		memcpy(buff, UART_buffer + UART_read, 512 - UART_read);
+		memcpy(buff + (512 - UART_read), UART_buffer, (UART_read + length - 512));
+	} 
+	UART_read += length;
+	UART_read %= 512;
+ 	return to_read;
+}
+
 void UART_data_write (char c) {
 
   while (!(LPC_UART->LSR & 0x20));
@@ -76,5 +94,38 @@ void UART_data_write_nstring (char *string, int length) {
 	for (i = 0; i < length; i++) {
 		UART_data_write(string[i]);
 	}
+}
 
+extern void UART_IRQHandler(){
+
+	UART_buffer[UART_index++] = UART_data_read();
+	UART_index %= 512;
+
+	if (UART_buffer[(UART_index == 0 ? 511 : UART_index-1)] == '\r') {
+#if DEBUG
+		UART_data_write_string("Carriage return\r\n");
+#endif
+		state = 1;
+	} else if (state == 1) {
+		if (UART_buffer[(UART_index == 0 ? 511 : UART_index-1)] == '\n'){
+			// do stuff to process the string
+#if DEBUG
+			UART_data_write_string("I totally see a newline!\r\n");
+#endif
+
+			UART_buffer[(UART_index == 1 ? 511 : UART_index-2)] = '\0';
+#if DEBUG
+			{
+				UART_data_write_string("I see \"");
+				UART_data_write_string(UART_buffer);
+				UART_data_write_string("\"!\r\n");
+			}
+#endif
+			UART_index = 0;
+			UART_done = 1;
+			UART_interrupt_disable();
+			//GPIO1_output_toggle(GPIO_P4);
+		}
+		state = 0;
+	} 
 }

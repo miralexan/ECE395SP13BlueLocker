@@ -35,23 +35,8 @@ int main(){
 			memset(buf, 'a', 142);
 			buf[140] = '\r';
 			buf[141] = '\n';
-			write_storage("\02312342321323451678653421abcd\r\n", 32, 0);
-			write_storage("12312342321323451678653421abcd\r\n", 32, 32);
-			write_storage("12312342321323451678653421abcd\r\n", 32, 64);
-			write_storage("12312342321323451678653421abcd\r\n", 32, 96);
-			write_storage("12312342321323451678653421abcd\r\n", 32, 128);
-			write_storage("12312342321323451678653421abcd\r\n", 32, 160);
-			write_storage("12312342321323451678653421abcd\r\n", 32, 192);
-			write_storage("12312342321323451678653421abcd\r\n", 32, 224);
-			read_storage(buf, 140, 0);	   
-			UART_data_write_nstring(buf, 142);
-			read_storage(buf, 140, 50);	   
-			UART_data_write_nstring(buf, 142);
-			read_storage(buf, 140, 70);	   
-			UART_data_write_nstring(buf, 142);
-			read_storage(buf, 140, 30);	   
-			UART_data_write_nstring(buf, 142);
-			read_storage(buf, 140, 11);	   
+			write_storage("\0\r\n", 3, 0);
+			read_storage(buf, 3, 0);	   
 			UART_data_write_nstring(buf, 142);
 		}
 

@@ -411,11 +411,6 @@
               <FileType>5</FileType>
               <FilePath>.\io_experiment.h</FilePath>
             </File>
-            <File>
-              <FileName>handlers.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\handlers.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -465,6 +460,16 @@
               <FileName>hasher.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\hasher.h</FilePath>
+            </File>
+            <File>
+              <FileName>password.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\password.c</FilePath>
+            </File>
+            <File>
+              <FileName>password.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\password.h</FilePath>
             </File>
           </Files>
         </Group>
