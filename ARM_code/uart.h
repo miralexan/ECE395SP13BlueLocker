@@ -24,6 +24,6 @@ void UART_disable(void);
 int UART_recv(char*, int);
 void UART_data_write(char c);
 void UART_data_write_string(char *string);
-void UART_data_write_nstring(char*, int);
+void UART_data_write_nstring(char *string, int length);
 
 #endif

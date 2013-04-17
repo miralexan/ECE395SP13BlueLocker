@@ -19,7 +19,7 @@ void lpc_init(){
 }
 
 int main(){
-	int i;
+	//int i;
 	char input[512];
 
 	lpc_init();
@@ -38,11 +38,11 @@ int main(){
 			
 			/* test */
 			if (strncmp(input, "test", 4) == 0) {
-				test();
+				test(input);
 			}
 
 			/* open [password] */
-			if (strncmp(input, "open", 4) == 0) { 
+			else if (strncmp(input, "open", 4) == 0) { 
 				open(input);
 			}
 
@@ -51,7 +51,8 @@ int main(){
 				close(input);
 			}
 
-			/* set [oldpass] [newpass] 
+			/* set oldpass[\r\nnewpass]
+			 * set [newpass] <- if password is unset
 			 * oldpass is a paramater iff a password is currently set*/
 
 			else if (strncmp(input, "set", 3) == 0) {
@@ -68,22 +69,24 @@ int main(){
 //	return 0;	
 }
 
-void test() {
+void test(char *input) {
 	
 	char buf[142];
+	int i;
 	
 	memset(buf, 'a', 142);
 	buf[140] = '\r';
 	buf[141] = '\n';
 	
-	write_storage("\02312342321323451678653421abcd\r\n", 32, 0);
-	write_storage("12312342321323451678653421abcd\r\n", 32, 32);
-	write_storage("12312342321323451678653421abcd\r\n", 32, 64);
-	write_storage("12312342321323451678653421abcd\r\n", 32, 96);
-	write_storage("12312342321323451678653421abcd\r\n", 32, 128);
-	write_storage("12312342321323451678653421abcd\r\n", 32, 160);
-	write_storage("12312342321323451678653421abcd\r\n", 32, 192);
-	write_storage("12312342321323451678653421abcd\r\n", 32, 224);
+	write_storage("02312342321323451678653421abcd\r\n", 32, 0);
+	write_storage("0231234232132345167\0653421abcd\r\n", 32, 3);
+	write_storage("This is the song that never...\r\n", 32, 35);
+	write_storage("...ends for it goes on and on \r\n", 32, 67);
+	write_storage("and on and on...  Streetlights\r\n", 32, 99);
+	write_storage("I'm feeling your arms around  \r\n", 32, 131);
+	write_storage("me on the other side.  It's...\r\n", 32, 163);
+	write_storage("time to go; I'm hearing your  \r\n", 32, 195);
+	write_storage("voice without words on theBOOM\r\n", 32, 227);
 	
 	read_storage(buf, 140, 0);	   
 	UART_data_write_nstring(buf, 142);
@@ -95,7 +98,27 @@ void test() {
 	UART_data_write_nstring(buf, 142);
 	read_storage(buf, 140, 11);	   
 	UART_data_write_nstring(buf, 142);
+
+	UART_data_write_string("The hash on the flash was reset.\r\n");
+	if (strncmp(input + 4, " reset", 6) == 0) {
+		UART_data_write_string("The hash on the ARM was also reset.\r\n");
+		readpass();
+	}
+
+	//UART_data_write_string("Testing \\0: happy\0happy\r\n");
 	
+	for (i = 0; i < 35; i++) {
+		read_storage(buf, 1, i);
+		UART_data_write_string("The character read was 0x");
+		UART_data_write((((buf[0] >> 4) & 0x0F) <= 9) ?
+			(((buf[0] >> 4) & 0x0F) + '0') :
+			(((buf[0] >> 4) & 0x0F) - 10 + 'A'));	
+		UART_data_write(((buf[0] & 0x0F) <= 9) ?
+			((buf[0] & 0x0F) + '0') :
+			((buf[0] & 0x0F) - 10 + 'A'));
+		UART_data_write_string(".\r\n");
+	}
+
 }
 
 void set_step_2(char* input) {
@@ -115,15 +138,17 @@ void set_step_2(char* input) {
 
 void open(char* input) {
 	
-	int i;
+	//int i;
 	
-	if (((passisset()) && (input[4] == '\0')) ||
-		((input[4] == ' ') && checkpass(input + 5))) {
+	if (((passisset() == 0) && (input[4] == '\0')) ||
+		((passisset() != 0) && (input[4] == ' ') && checkpass(input + 5))) {
 		
 		UART_data_write_string("open solenoid activated\r\n");
 		//for (i = 0; i < 0x0007FFFF; i++) {}
 		GPIO0_output_low(GPIO_P7);
 		//GPIO0_output_high(GPIO_P4);
+	} else if ((passisset() != 0) && (input[4] == '\0')) {
+		UART_data_write_string("password not supplied\r\n");
 	} else if ((input[4] == '\0') || (input[4] == ' ')) {
 		UART_data_write_string("password not recognized\r\n");
 	} else {
@@ -134,15 +159,17 @@ void open(char* input) {
 
 void close(char* input) {
 	
-	int i;
+	//int i;
 	
-	if (((passisset()) && (input[5] == '\0')) ||
-		((input[5] == ' ') && checkpass(input + 6))) {
+	if (((passisset() == 0) && (input[5] == '\0')) ||
+		((passisset() != 0) && (input[5] == ' ') && checkpass(input + 6))) {
 		
 		UART_data_write_string("close solenoid activated\r\n");
 		//for (i = 0; i < 0x0007FFFF; i++) {}
 		GPIO0_output_high(GPIO_P7);
 		//GPIO0_output_low(GPIO_P4);
+	} else if ((passisset() != 0) && (input[5] == '\0')) {
+		UART_data_write_string("password not supplied\r\n");
 	} else if ((input[5] == '\0') || (input[5] == ' ')) {
 		UART_data_write_string("password not recognized\r\n");
 	} else {
@@ -153,17 +180,17 @@ void close(char* input) {
 
 void set_step_1(char* input) {
 	
-	if ((passisset()) && (input[3] == ' ')) {
+	if ((passisset() == 0) && (input[3] == ' ')) {
 		UART_data_write_string("password is currently null, setting to ");
 		UART_data_write_string(input + 4);
 		UART_data_write_string("\r\n");
 		setpass(input + 4);
 		UART_data_write_string("password set\r\n");
-	} else if ((passisset()) && (input[3] == '\0')) {
+	} else if ((passisset() == 0) && (input[3] == '\0')) {
 		UART_data_write_string("password null, no new password provided\r\n");
 		UART_data_write_string("transitioning into password change state\r\n");
 		password_state = 1;
-	} else if (passisset()) {
+	} else if (passisset() == 0) {
 		UART_data_write_string("command not recognized\r\n");
 	} else if ((input[3] == ' ') && checkpass(input + 4)) {
 
@@ -173,6 +200,8 @@ void set_step_1(char* input) {
 		
 	} else if (input[3] == ' ') {
 		UART_data_write_string("password not recognized\r\n");
+	} else if (input[3] == '\0') {
+		UART_data_write_string("password not supplied\r\n");
 	} else {
 		UART_data_write_string("command not recognized\r\n");
 	}

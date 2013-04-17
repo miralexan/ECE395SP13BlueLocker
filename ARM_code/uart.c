@@ -81,11 +81,22 @@ void UART_data_write (char c) {
 
 }
 
-void UART_data_write_string (char *string) {
+void UART_data_write_string(char *string) {
 	
 	int i;
 
 	for (i = 0; string[i] != '\0'; i++) {
+		while (!(LPC_UART->LSR & 0x20));
+		LPC_UART->THR = string[i];
+	}
+
+}
+
+void UART_data_write_nstring(char *string, int length) {
+	
+	int i;
+
+	for (i = 0; i < length ; i++) {
 		while (!(LPC_UART->LSR & 0x20));
 		LPC_UART->THR = string[i];
 	}

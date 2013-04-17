@@ -12,7 +12,7 @@
 
 #define DEBUG 1
 
-void test(void);
+void test(char*);
 void set_step_2(char*);
 void open(char*);
 void close(char*);
