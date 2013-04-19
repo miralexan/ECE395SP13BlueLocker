@@ -411,11 +411,6 @@
               <FileType>5</FileType>
               <FilePath>.\io_experiment.h</FilePath>
             </File>
-            <File>
-              <FileName>handlers.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\handlers.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -437,6 +432,26 @@
               <FilePath>.\uart.c</FilePath>
             </File>
             <File>
+              <FileName>spio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\spio.c</FilePath>
+            </File>
+            <File>
+              <FileName>spio.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\spio.h</FilePath>
+            </File>
+            <File>
+              <FileName>storage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\storage.c</FilePath>
+            </File>
+            <File>
+              <FileName>storage.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\storage.h</FilePath>
+            </File>
+            <File>
               <FileName>hasher.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\hasher.c</FilePath>
@@ -445,6 +460,21 @@
               <FileName>hasher.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\hasher.h</FilePath>
+            </File>
+            <File>
+              <FileName>password.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\password.c</FilePath>
+            </File>
+            <File>
+              <FileName>password.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\password.h</FilePath>
+            </File>
+            <File>
+              <FileName>flags.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\flags.h</FilePath>
             </File>
           </Files>
         </Group>

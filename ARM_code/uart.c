@@ -3,6 +3,7 @@
 int UART_done = 0;
 char UART_buffer[512];
 int UART_index = 0;
+int UART_read = 0;
 
 void UART_enable(){
 
@@ -22,7 +23,7 @@ void UART_enable(){
 	LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);
 
 	/* Set UART clock division */
-	LPC_SYSCON->UARTCLKDIV = 0x04;	/* divide clock by 1 */
+	LPC_SYSCON->UARTCLKDIV = 0x04;	/* divide clock by 4 */
 
 	/* Set data word length to 8 bits.  Enable division latch access */
 	LPC_UART->LCR |= 0x83;
@@ -51,14 +52,35 @@ void UART_disable() {
 /*----------------------------------------------------------------------------
   Write character to Serial Port
  *----------------------------------------------------------------------------*/
-void UART_data_write (char c) {
+int UART_recv(char* buff, const int length){
+	int to_read = 0;
+	int buff_size;
+
+	while(!UART_done);
+
+	buff_size = ((UART_index > UART_read) ? (UART_index) : (512 + UART_index)) - UART_read;	
+
+	to_read = (length > buff_size ? buff_size : length);
+	if (UART_read + to_read <= 512) {
+		memcpy(buff, UART_buffer+UART_read, to_read);
+	} else {
+		memcpy(buff, UART_buffer + UART_read, 512 - UART_read);
+		memcpy(buff + (512 - UART_read), UART_buffer, (UART_read + to_read - 512));
+	} 
+	UART_read += to_read;
+	UART_read %= 512;
+	UART_done = 0;
+ 	return to_read;
+}
+
+void UART_data_write (const char c) {
 
   while (!(LPC_UART->LSR & 0x20));
   LPC_UART->THR = c;
 
 }
 
-void UART_data_write_string (char *string) {
+void UART_data_write_string(const char *string) {
 	
 	int i;
 
@@ -69,12 +91,38 @@ void UART_data_write_string (char *string) {
 
 }
 
-void UART_data_write_nstring (char *string, int length) {
+void UART_data_write_nstring(const char *string, const int length) {
+	
+	int i;
+
+	for (i = 0; i < length ; i++) {
+		while (!(LPC_UART->LSR & 0x20));
+		LPC_UART->THR = string[i];
+	}
+
+}
+
+void UART_send(const char *string, const int length) {
 	
 	int i;
 
 	for (i = 0; i < length; i++) {
 		UART_data_write(string[i]);
 	}
+}
 
+extern void UART_IRQHandler(){
+
+	UART_buffer[UART_index++] = UART_data_read();
+	UART_index %= 512;
+
+	if (UART_buffer[(UART_index == 0 ? 511 : UART_index-1)] == '\n'){
+		if (UART_buffer[(UART_index <= 1 ? 510 + UART_index : UART_index-2)] == '\r'){
+			// do stuff to process the string
+			UART_buffer[(UART_index <= 1 ? 510 + UART_index : UART_index-2)] = '\0';
+			UART_index = (UART_index == 0) ? 511 : (UART_index - 1);
+			UART_done = 1;
+			UART_interrupt_disable();
+		}	
+	}
 }

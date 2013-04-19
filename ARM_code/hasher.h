@@ -9,8 +9,8 @@
 
 #define HASH_LENGTH 20
 
-void setpass(char*, char*);
-int checkpass(char*, char*);
+void hashpass(const char*, char*);
+int checkhash(const char*, char*);
 
 #endif // HASHER_H\
 
