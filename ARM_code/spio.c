@@ -51,7 +51,7 @@ void SPIO_enable(void){
 	}	
 }
 
-int SPIO_send(const char* buf, const int size){
+int SPIO_send(device* device_h, const char* buf, const int size, const unsigned char garbage){
 	int i = 0;
 
 	if (((SPIO_index >= SPIO_read) ? (SPIO_read + 512) : (SPIO_read))
@@ -83,7 +83,7 @@ int SPIO_send(const char* buf, const int size){
 	return 0;
 }
 
-int SPIO_recv(char* buf, const int length){
+int SPIO_recv(device* device_h, char* buf, const int length, const unsigned char garbage){
 	int to_read = 0;
 	int buff_size = ((SPIO_index >= SPIO_read) ? (SPIO_index) : (512 + SPIO_index)) - SPIO_read;
 
@@ -99,7 +99,8 @@ int SPIO_recv(char* buf, const int length){
  	return to_read;
 }
 
-void SPIO_flush(void){
+int SPIO_flush(void){
 	SPIO_read = SPIO_index;
+	return 0;
 }
 

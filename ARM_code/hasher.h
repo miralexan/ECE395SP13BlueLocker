@@ -2,10 +2,8 @@
 #define HASHER_H
 
 #include "sha1.h"
-#include "uart.h"
 #include "string.h"
-
-#define DEBUG 1
+#include "debug.h"
 
 #define HASH_LENGTH 20
 

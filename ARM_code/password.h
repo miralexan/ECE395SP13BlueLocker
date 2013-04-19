@@ -2,11 +2,9 @@
 #define PASSWORD_H
 
 #include "hasher.h"
-#include "uart.h"
 #include "string.h"
-#include "storage.h"
-
-#define DEBUG 1
+#include "device.h"
+#include "debug.h"
 
 void readpass(void);
 void setpass(const char*);

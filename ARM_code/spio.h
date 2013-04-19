@@ -3,7 +3,9 @@
 
 #include "LPC11xx.h"
 #include "string.h"
-#include "uart.h"
+#include "debug.h"
+
+typedef struct device_t device;
 
 #define SPIO_TFE() (LPC_SSP0->SR & 0x01)
 #define SPIO_TNF() (LPC_SSP0->SR & 0x02)
@@ -13,10 +15,10 @@
 
 void SPIO_enable(void);
 
-int SPIO_send(const char*, const int);
+int SPIO_send(device*, const char*, const int, const unsigned char);
 
-int SPIO_recv(char*, const int);
+int SPIO_recv(device*, char*, const int, const unsigned char);
 
-void SPIO_flush(void);
+int SPIO_flush(void);
 
 #endif

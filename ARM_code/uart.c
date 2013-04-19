@@ -52,7 +52,7 @@ void UART_disable() {
 /*----------------------------------------------------------------------------
   Write character to Serial Port
  *----------------------------------------------------------------------------*/
-int UART_recv(char* buff, const int length){
+int UART_recv(device* device_h, char* buff, const int length, const unsigned char garbage){
 	int to_read = 0;
 	int buff_size;
 
@@ -102,13 +102,19 @@ void UART_data_write_nstring(const char *string, const int length) {
 
 }
 
-void UART_send(const char *string, const int length) {
+int UART_send(device* device_h, const char *string, const int length, const unsigned char garbage) {
 	
 	int i;
 
 	for (i = 0; i < length; i++) {
 		UART_data_write(string[i]);
 	}
+
+	return length;
+}
+
+int UART_flush(void){
+	return 0;
 }
 
 extern void UART_IRQHandler(){

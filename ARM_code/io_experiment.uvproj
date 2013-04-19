@@ -472,9 +472,19 @@
               <FilePath>.\password.h</FilePath>
             </File>
             <File>
-              <FileName>flags.h</FileName>
+              <FileName>debug.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\flags.h</FilePath>
+              <FilePath>.\debug.h</FilePath>
+            </File>
+            <File>
+              <FileName>device.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\device.h</FilePath>
+            </File>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\device.c</FilePath>
             </File>
           </Files>
         </Group>

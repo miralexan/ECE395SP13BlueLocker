@@ -2,15 +2,11 @@
 #define	__IO_EXPERIMENT_H__
 #include "LPC11xx.h"
 #include "gpio.h"
-#include "uart.h"
+#include "device.h"
 #include "stdlib.h"
-#include "sha1.h"
-#include "spio.h"
 #include "storage.h"
-#include "hasher.h"
 #include "password.h"
-
-#define DEBUG 1
+#include "debug.h"
 
 void test(const char*);
 void set_step_2(const char*);

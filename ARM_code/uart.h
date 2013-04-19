@@ -8,7 +8,9 @@
 
 #include "LPC11xx.h"
 #include "string.h"
-#include "flags.h"
+#include "debug.h"
+
+typedef struct device_t device;
 
 extern int UART_done;
 extern char UART_buffer[];
@@ -21,9 +23,11 @@ void UART_disable(void);
 
 #define UART_data_read() (LPC_UART->RBR)
 
-int UART_recv(char*, const int);
+int UART_recv(device*, char*, const int, const unsigned char);
+int UART_send(device*, const char *, const int, const unsigned char);
 void UART_data_write(const char c);
 void UART_data_write_string(const char *string);
 void UART_data_write_nstring(const char *string, const int length);
+int UART_flush(void);
 
 #endif
