@@ -12,10 +12,10 @@
 
 #define DEBUG 1
 
-void test(char*);
-void set_step_2(char*);
-void open(char*);
-void close(char*);
-void set_step_1(char*);
+void test(const char*);
+void set_step_2(const char*);
+void open(const char*);
+void close(const char*);
+void set_step_1(const char*);
 
 #endif

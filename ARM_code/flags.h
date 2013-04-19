@@ -1,11 +1,11 @@
 #ifndef __FLAGS_H__
 #define __FLAGS_H__
 
-typedef struct {
-	char EOB;		// End Of Buffer
-	char BOF;		// Buffer OverFlow
-} flags_t flags;
+typedef char flags;
 
-#define init_flags(p) ((p).EOB = 0; (p).BOF = 0);
+#define init_flags(p) ((p) = 0)
+
+#define eob(p) ((p) & 0x01)
+#define bof(p) ((p) & 0x02)
 
 #endif

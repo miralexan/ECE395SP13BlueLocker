@@ -16,8 +16,8 @@
 #define STATUS_BP0 0x04
 #define STATUS_BP1 0x08
 
-int read_storage(char*, int, char);
-int write_storage(char*, int, unsigned char);
+int read_storage(char*, const int, const unsigned char);
+int write_storage(const char*, const int, const unsigned char);
 int storage_write_enable(void);
 int storage_read_status(char);
 

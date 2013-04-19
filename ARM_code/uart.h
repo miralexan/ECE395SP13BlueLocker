@@ -21,9 +21,9 @@ void UART_disable(void);
 
 #define UART_data_read() (LPC_UART->RBR)
 
-int UART_recv(char*, int);
-void UART_data_write(char c);
-void UART_data_write_string(char *string);
-void UART_data_write_nstring(char *string, int length);
+int UART_recv(char*, const int);
+void UART_data_write(const char c);
+void UART_data_write_string(const char *string);
+void UART_data_write_nstring(const char *string, const int length);
 
 #endif

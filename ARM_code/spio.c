@@ -51,7 +51,7 @@ void SPIO_enable(void){
 	}	
 }
 
-int SPIO_send(char* buf, int size){
+int SPIO_send(const char* buf, const int size){
 	int i = 0;
 
 	if (((SPIO_index >= SPIO_read) ? (SPIO_read + 512) : (SPIO_read))
@@ -83,7 +83,7 @@ int SPIO_send(char* buf, int size){
 	return 0;
 }
 
-int SPIO_recv(char* buf, int length){
+int SPIO_recv(char* buf, const int length){
 	int to_read = 0;
 	int buff_size = ((SPIO_index >= SPIO_read) ? (SPIO_index) : (512 + SPIO_index)) - SPIO_read;
 

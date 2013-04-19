@@ -19,7 +19,6 @@ void lpc_init(){
 }
 
 int main(){
-	//int i;
 	char input[512];
 
 	lpc_init();
@@ -34,7 +33,7 @@ int main(){
 		
 		if (password_state == 1) {
 			set_step_2(input);
-		} else { // password_state == 0
+		} else {
 			
 			/* test */
 			if (strncmp(input, "test", 4) == 0) {
@@ -69,15 +68,15 @@ int main(){
 //	return 0;	
 }
 
-void test(char *input) {
-	
+void test(const char *input) {
+/*	
 	char buf[142];
 	int i;
 	
 	memset(buf, 'a', 142);
 	buf[140] = '\r';
 	buf[141] = '\n';
-	
+*/	
 	write_storage("02312342321323451678653421abcd\r\n", 32, 0);
 	write_storage("0231234232132345167\0653421abcd\r\n", 32, 3);
 	write_storage("This is the song that never...\r\n", 32, 35);
@@ -87,7 +86,7 @@ void test(char *input) {
 	write_storage("me on the other side.  It's...\r\n", 32, 163);
 	write_storage("time to go; I'm hearing your  \r\n", 32, 195);
 	write_storage("voice without words on theBOOM\r\n", 32, 227);
-	
+/*	
 	read_storage(buf, 140, 0);	   
 	UART_data_write_nstring(buf, 142);
 	read_storage(buf, 140, 50);	   
@@ -98,7 +97,7 @@ void test(char *input) {
 	UART_data_write_nstring(buf, 142);
 	read_storage(buf, 140, 11);	   
 	UART_data_write_nstring(buf, 142);
-
+*/
 	UART_data_write_string("The hash on the flash was reset.\r\n");
 	if (strncmp(input + 4, " reset", 6) == 0) {
 		UART_data_write_string("The hash on the ARM was also reset.\r\n");
@@ -106,7 +105,7 @@ void test(char *input) {
 	}
 
 	//UART_data_write_string("Testing \\0: happy\0happy\r\n");
-	
+/*	
 	for (i = 0; i < 35; i++) {
 		read_storage(buf, 1, i);
 		UART_data_write_string("The character read was 0x");
@@ -118,16 +117,16 @@ void test(char *input) {
 			((buf[0] & 0x0F) - 10 + 'A'));
 		UART_data_write_string(".\r\n");
 	}
-
+*/
 }
 
-void set_step_2(char* input) {
+void set_step_2(const char* input) {
 	
 	if (strlen(input) != 0) {
 		UART_data_write_string("new password supplied, changing\r\n");
 		setpass(input);
 		UART_data_write_string("password changed\r\n");
-	} else { //strlen(input) == 0
+	} else {
 		UART_data_write_string("no new password, unsetting pass\r\n");
 		unsetpass();
 		UART_data_write_string("password reset\r\n");
@@ -136,7 +135,7 @@ void set_step_2(char* input) {
 	
 }
 
-void open(char* input) {
+void open(const char* input) {
 	
 	//int i;
 	
@@ -157,7 +156,7 @@ void open(char* input) {
 	
 }
 
-void close(char* input) {
+void close(const char* input) {
 	
 	//int i;
 	
@@ -178,7 +177,7 @@ void close(char* input) {
 	
 }
 
-void set_step_1(char* input) {
+void set_step_1(const char* input) {
 	
 	if ((passisset() == 0) && (input[3] == ' ')) {
 		UART_data_write_string("password is currently null, setting to ");

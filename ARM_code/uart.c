@@ -4,7 +4,6 @@ int UART_done = 0;
 char UART_buffer[512];
 int UART_index = 0;
 int UART_read = 0;
-static int state = 0;
 
 void UART_enable(){
 
@@ -53,7 +52,7 @@ void UART_disable() {
 /*----------------------------------------------------------------------------
   Write character to Serial Port
  *----------------------------------------------------------------------------*/
-int UART_recv(char* buff, int length){
+int UART_recv(char* buff, const int length){
 	int to_read = 0;
 	int buff_size;
 
@@ -74,14 +73,14 @@ int UART_recv(char* buff, int length){
  	return to_read;
 }
 
-void UART_data_write (char c) {
+void UART_data_write (const char c) {
 
   while (!(LPC_UART->LSR & 0x20));
   LPC_UART->THR = c;
 
 }
 
-void UART_data_write_string(char *string) {
+void UART_data_write_string(const char *string) {
 	
 	int i;
 
@@ -92,7 +91,7 @@ void UART_data_write_string(char *string) {
 
 }
 
-void UART_data_write_nstring(char *string, int length) {
+void UART_data_write_nstring(const char *string, const int length) {
 	
 	int i;
 
@@ -103,7 +102,7 @@ void UART_data_write_nstring(char *string, int length) {
 
 }
 
-void UART_send(char *string, int length) {
+void UART_send(const char *string, const int length) {
 	
 	int i;
 
@@ -117,31 +116,13 @@ extern void UART_IRQHandler(){
 	UART_buffer[UART_index++] = UART_data_read();
 	UART_index %= 512;
 
-	if (UART_buffer[(UART_index == 0 ? 511 : UART_index-1)] == '\r') {
-#if DEBUG
-		UART_data_write_string("Carriage return\r\n");
-#endif
-		state = 1;
-	} else if (state == 1) {
-		if (UART_buffer[(UART_index == 0 ? 511 : UART_index-1)] == '\n'){
+	if (UART_buffer[(UART_index == 0 ? 511 : UART_index-1)] == '\n'){
+		if (UART_buffer[(UART_index <= 1 ? 510 + UART_index : UART_index-2)] == '\r'){
 			// do stuff to process the string
-#if DEBUG
-			UART_data_write_string("I totally see a newline!\r\n");
-#endif
-
 			UART_buffer[(UART_index <= 1 ? 510 + UART_index : UART_index-2)] = '\0';
-#if DEBUG
-			{
-				UART_data_write_string("I see \"");
-				UART_data_write_string(UART_buffer);
-				UART_data_write_string("\"!\r\n");
-			}
-#endif
 			UART_index = (UART_index == 0) ? 511 : (UART_index - 1);
 			UART_done = 1;
 			UART_interrupt_disable();
-			//GPIO1_output_toggle(GPIO_P4);
-		}
-		state = 0;
-	} 
+		}	
+	}
 }

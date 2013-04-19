@@ -11,15 +11,11 @@
 #define SPIO_RFF() (LPC_SSP0->SR & 0x08)
 #define SPIO_BSY() (LPC_SSP0->SR & 0x10)
 
-extern char SPIO_buff[];
-extern int SPIO_done;
-extern int SPIO_index;
-
 void SPIO_enable(void);
 
-int SPIO_send(char*, int);
+int SPIO_send(const char*, const int);
 
-int SPIO_recv(char*, int);
+int SPIO_recv(char*, const int);
 
 void SPIO_flush(void);
 

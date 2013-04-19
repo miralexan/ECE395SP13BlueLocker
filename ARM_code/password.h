@@ -9,8 +9,8 @@
 #define DEBUG 1
 
 void readpass(void);
-void setpass(char*);
-int checkpass(char*);
+void setpass(const char*);
+int checkpass(const char*);
 int passisset(void);
 void unsetpass(void);
 

@@ -1,7 +1,7 @@
 #include "storage.h"
 #include "string.h"
 
-int read_storage(char* buff, int length, char address){
+int read_storage(char* buff, const int length, const unsigned char address){
 	char cmd[258];
 
 	memset(cmd, 0, 258);
@@ -17,7 +17,7 @@ int read_storage(char* buff, int length, char address){
 	return SPIO_recv(buff, length);
 }
 
-int write_storage(char* buff, int length, unsigned char address){
+int write_storage(const char* buff, const int length, const unsigned char address){
 	char cmd[18];
 	int start_page, end_page, start_len, end_len, send;
 	
