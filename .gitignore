@@ -1,7 +1,8 @@
-
 ARM_code/*.o
 ARM_code/*.warth2*
 ARM_code/*.trovilli*
 ARM_code/*.d
 ARM_code/*.__i
 ARM_code/*.crf
+BlueLock/bin/*
+BlueLock/gen/*

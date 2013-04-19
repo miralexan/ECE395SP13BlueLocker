@@ -7,8 +7,9 @@ char password_set;
 extern device flash;
 
 void readpass() {
+
 	read_storage(&flash, &password_set, 1, 0);
-	if (password_set == '1') {
+	if (password_set == 1) {
 		password_set = 1;
 	} else {
 		password_set = 0;
@@ -34,9 +35,5 @@ int passisset() {
 
 void unsetpass() {
 	password_set = 0;
-	if (password_set == 1) {
-		write_storage(&flash, "1", 1, 0);
-	} else {
-		write_storage(&flash, "0", 1, 0);
-	}
+	write_storage(&flash, &password_set, 1, 0);
 }
