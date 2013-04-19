@@ -77,8 +77,8 @@ void test(const char *input) {
 	buf[140] = '\r';
 	buf[141] = '\n';
 */	
-	write_storage("02312342321323451678653421abcd\r\n", 32, 0);
-	write_storage("0231234232132345167\0653421abcd\r\n", 32, 3);
+	write_storage("\02312342321323451678653421abcd\r\n", 32, 0);
+/*	write_storage("0231234232132345167\0653421abcd\r\n", 32, 3);
 	write_storage("This is the song that never...\r\n", 32, 35);
 	write_storage("...ends for it goes on and on \r\n", 32, 67);
 	write_storage("and on and on...  Streetlights\r\n", 32, 99);
@@ -86,7 +86,7 @@ void test(const char *input) {
 	write_storage("me on the other side.  It's...\r\n", 32, 163);
 	write_storage("time to go; I'm hearing your  \r\n", 32, 195);
 	write_storage("voice without words on theBOOM\r\n", 32, 227);
-/*	
+	
 	read_storage(buf, 140, 0);	   
 	UART_data_write_nstring(buf, 142);
 	read_storage(buf, 140, 50);	   

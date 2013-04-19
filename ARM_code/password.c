@@ -7,7 +7,7 @@ char password_set;
 
 void readpass() {
 	read_storage(&password_set, 1, 0);
-	if (password_set == '1') {
+	if (password_set == 1) {
 		password_set = 1;
 	} else {
 		password_set = 0;
@@ -33,9 +33,5 @@ int passisset() {
 
 void unsetpass() {
 	password_set = 0;
-	if (password_set == 1) {
-		write_storage("1", 1, 0);
-	} else {
-		write_storage("0", 1, 0);
-	}
+	write_storage(&password_set, 1, 0);
 }
