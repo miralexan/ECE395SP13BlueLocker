@@ -30,11 +30,19 @@ int dread(device* device_h, char* buff, const int length, const unsigned char ad
 }
 
 int dwrite(device* device_h, const char* buff, const int length, const unsigned char address){
-	if(device_h->read == 0){
+	if(device_h->write == 0){
 		return -1;
 	}
 
  	return device_h->write(device_h, buff, length, address);
+}
+
+int dwrite_string(device* device_h, const char* string, const unsigned char address){
+	if(device_h->write == 0){
+		return -1;
+	}
+
+ 	return device_h->write(device_h, string, strlen(string), address);
 }
 
 int dflush(device* device_h){

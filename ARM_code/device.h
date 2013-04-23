@@ -3,6 +3,7 @@
 #include "uart.h"
 #include "spio.h"
 #include "storage.h"
+#include "string.h"
 
 #define UART 0
 #define SPIO 1
@@ -19,6 +20,7 @@ struct device_t{
 int dinit(device*, const int);
 int dread(device*, char*, const int, const unsigned char);
 int dwrite(device*, const char*, const int, const unsigned char);
+int dwrite_string(device*, const char*, const unsigned char);
 int dflush(device*);
 void dclear(device*);
 
