@@ -128,6 +128,7 @@ extern void UART_IRQHandler(){
 			UART_buffer[(UART_index <= 1 ? 510 + UART_index : UART_index-2)] = '\0';
 			UART_index = (UART_index == 0) ? 511 : (UART_index - 1);
 			UART_done = 1;
+			GPIO1_output_toggle(GPIO_P4);
 			UART_interrupt_disable();
 		}	
 	}

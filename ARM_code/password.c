@@ -2,7 +2,6 @@
 #include "password.h"
 
 char password[512];
-//int password_length;
 char password_set;
 extern device flash;
 

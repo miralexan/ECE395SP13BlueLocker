@@ -9,6 +9,7 @@
 #include "LPC11xx.h"
 #include "string.h"
 #include "debug.h"
+#include "gpio.h"
 
 typedef struct device_t device;
 

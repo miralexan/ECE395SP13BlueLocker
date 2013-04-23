@@ -5,18 +5,26 @@ device flash;
 device uart;
 
 void lpc_init(){
+	// Enable general purpose I/O block
 	GPIO_enable();
+	// Enable Asynchronous Serial block
 	UART_enable();
+	// Enable Synchronous Serial block
 	SPIO_enable();
 
+	// Set I/O0 port 7 to output (solenoid control/open indicator)
 	GPIO0_dir_output(GPIO_P7);
+	// Set I/O0 port 4 to output (closed indicator)
 	GPIO0_dir_output(GPIO_P4);
+	// Set I/O1 port 4 to output (end of command indicator)
 	GPIO1_dir_output(GPIO_P4);
 
+	// Set initial output levels
 	GPIO0_output_high(GPIO_P7);
 	GPIO0_output_low(GPIO_P4);	
-	GPIO0_output_high(GPIO_P2);
+	GPIO1_output_high(GPIO_P4);
 
+	// Begin listening to UART
 	UART_interrupt_enable();
 }
 
@@ -32,8 +40,6 @@ int main(){
 
 	while(1){
 		dread(&uart, input, 512, 0);
-
-		/* below is a test parser */
 		
 		if (password_state == 1) {
 			set_step_2(input);
@@ -72,84 +78,42 @@ int main(){
 //	return 0;	
 }
 
+/* test
+ * parameters - 
+ *   input - The input string received from the user.
+ * outputs - 
+ *   none
+ * side-effects - 
+ *   resets any previously set password in storage
+ */
 void test(const char *input) {
-/*	
-	char buf[142];
-	int i;
-	
-	memset(buf, 'a', 142);
-	buf[140] = '\r';
-	buf[141] = '\n';
-*/	
 	write_storage(&flash, "\02312342321323451678653421abcd\r\n", 32, 0);
-/*	write_storage("0231234232132345167\0653421abcd\r\n", 32, 3);
-	write_storage("This is the song that never...\r\n", 32, 35);
-	write_storage("...ends for it goes on and on \r\n", 32, 67);
-	write_storage("and on and on...  Streetlights\r\n", 32, 99);
-	write_storage("I'm feeling your arms around  \r\n", 32, 131);
-	write_storage("me on the other side.  It's...\r\n", 32, 163);
-	write_storage("time to go; I'm hearing your  \r\n", 32, 195);
-	write_storage("voice without words on theBOOM\r\n", 32, 227);
-	
-	read_storage(buf, 140, 0);	   
-	UART_data_write_nstring(buf, 142);
-	read_storage(buf, 140, 50);	   
-	UART_data_write_nstring(buf, 142);
-	read_storage(buf, 140, 70);	   
-	UART_data_write_nstring(buf, 142);
-	read_storage(buf, 140, 30);	   
-	UART_data_write_nstring(buf, 142);
-	read_storage(buf, 140, 11);	   
-	UART_data_write_nstring(buf, 142);
-*/
+
 	dwrite_string(&uart, "The hash on the flash was reset.\r\n", 0);
-	if (strncmp(input + 4, " reset", 6) == 0) {
-		UART_data_write_string("The hash on the ARM was also reset.\r\n");
+//	if (strncmp(input + 4, " reset", 6) == 0) {
+		dwrite_string(&uart, "The hash on the ARM was also reset.\r\n", 0);
 		readpass();
-	}
-
-	//UART_data_write_string("Testing \\0: happy\0happy\r\n");
-/*	
-	for (i = 0; i < 35; i++) {
-		read_storage(buf, 1, i);
-		UART_data_write_string("The character read was 0x");
-		UART_data_write((((buf[0] >> 4) & 0x0F) <= 9) ?
-			(((buf[0] >> 4) & 0x0F) + '0') :
-			(((buf[0] >> 4) & 0x0F) - 10 + 'A'));	
-		UART_data_write(((buf[0] & 0x0F) <= 9) ?
-			((buf[0] & 0x0F) + '0') :
-			((buf[0] & 0x0F) - 10 + 'A'));
-		UART_data_write_string(".\r\n");
-	}
-*/
+//	}
 }
 
-void set_step_2(const char* input) {
-	
-	if (strlen(input) != 0) {
-		dwrite_string(&uart, "new password supplied, changing\r\n", 0);
-		setpass(input);
-		dwrite_string(&uart, "password changed\r\n", 0);
-	} else {
-		dwrite_string(&uart, "no new password, unsetting pass\r\n", 0);
-		unsetpass();
-		dwrite_string(&uart, "password reset\r\n", 0);
-	}
-	password_state = 0;
-	
-}
-
+/* open
+ * parameters - 
+ *   input - The input string received from the user.
+ * outputs - 
+ *   none
+ * side-effects - 
+ *   Sets GPIO0_4 high and GPIO0_7 low, changing output LEDs
+ *   and activating the solenoid
+ */
 void open(const char* input) {
-	
-	//int i;
 	
 	if (((passisset() == 0) && (input[4] == '\0')) ||
 		((passisset() != 0) && (input[4] == ' ') && checkpass(input + 5))) {
 		
 		dwrite_string(&uart, "open solenoid activated\r\n", 0);
-		//for (i = 0; i < 0x0007FFFF; i++) {}
+
 		GPIO0_output_low(GPIO_P7);
-		//GPIO0_output_high(GPIO_P4);
+		GPIO0_output_high(GPIO_P4);
 	} else if ((passisset() != 0) && (input[4] == '\0')) {
 		dwrite_string(&uart, "password not supplied\r\n", 0);
 	} else if ((input[4] == '\0') || (input[4] == ' ')) {
@@ -160,17 +124,24 @@ void open(const char* input) {
 	
 }
 
+/* close
+ * parameters - 
+ *   input - The input string received from the user.
+ * outputs - 
+ *   none
+ * side-effects - 
+ *   Sets GPIO0_4 low and GPIO0_7 high, changing output LEDs
+ *   and deactivating the solenoid
+ */
 void close(const char* input) {
-	
-	//int i;
 	
 	if (((passisset() == 0) && (input[5] == '\0')) ||
 		((passisset() != 0) && (input[5] == ' ') && checkpass(input + 6))) {
 		
 		dwrite_string(&uart, "close solenoid activated\r\n", 0);
-		//for (i = 0; i < 0x0007FFFF; i++) {}
+
 		GPIO0_output_high(GPIO_P7);
-		//GPIO0_output_low(GPIO_P4);
+		GPIO0_output_low(GPIO_P4);
 	} else if ((passisset() != 0) && (input[5] == '\0')) {
 		dwrite_string(&uart, "password not supplied\r\n", 0);
 	} else if ((input[5] == '\0') || (input[5] == ' ')) {
@@ -209,4 +180,18 @@ void set_step_1(const char* input) {
 		dwrite_string(&uart, "command not recognized\r\n", 0);
 	}
 	
+}
+
+void set_step_2(const char* input) {
+	
+	if (strlen(input) != 0) {
+		dwrite_string(&uart, "new password supplied, changing\r\n", 0);
+		setpass(input);
+		dwrite_string(&uart, "password changed\r\n", 0);
+	} else {
+		dwrite_string(&uart, "no new password, unsetting pass\r\n", 0);
+		unsetpass();
+		dwrite_string(&uart, "password reset\r\n", 0);
+	}
+	password_state = 0;
 }
