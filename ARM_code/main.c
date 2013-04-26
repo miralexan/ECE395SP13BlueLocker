@@ -1,7 +1,5 @@
 #include "io_experiment.h"
 
-int password_state;
-
 void lpc_init(){
 	// Enable general purpose I/O block
 	GPIO_enable();
@@ -30,43 +28,36 @@ int main(){
 	char input[512];
 
 	lpc_init();
-	password_state = 0;
 
 	readpass();
 
 	while(1){
 		UART_recv(input, 512);
-		
-		if (password_state == 1) {
-			set_step_2(input);
-		} else {
 			
-			/* test */
-			if (strncmp(input, "test", 4) == 0) {
-				test(input);
-			}
+		/* test */
+		if (strncmp(input, "test", 4) == 0) {
+			test(input);
+		}
 
-			/* open [password] */
-			else if (strncmp(input, "open", 4) == 0) { 
-				open(input);
-			}
+		/* open [password] */
+		else if (strncmp(input, "open", 4) == 0) { 
+			open(input);
+		}
 
-			/* close [password]	*/
-			else if (strncmp(input, "close", 5) == 0) {
-				close(input);
-			}
+		/* close [password]	*/
+		else if (strncmp(input, "close", 5) == 0) {
+			close(input);
+		}
 
-			/* set oldpass[\r\nnewpass]
-			 * set [newpass] <- if password is unset
-			 * oldpass is a paramater iff a password is currently set*/
-
-			else if (strncmp(input, "set", 3) == 0) {
-				set_step_1(input);
-			}
+		/* set oldpass[\r\nnewpass]
+		 * set [newpass] <- if password is unset
+		 * oldpass is a paramater iff a password is currently set*/
+		else if (strncmp(input, "set", 3) == 0) {
+			set(input);
+		}
 			
-			else {
-				UART_data_write_string("command not recognized\r\n");
-			}
+		else {
+			UART_data_write_string("command not recognized\r\n");
 		}
 		
 		UART_interrupt_enable();
@@ -147,7 +138,7 @@ void close(const char* input) {
 	
 }
 
-void set_step_1(const char* input) {
+void set(char* input) {
 	
 	if ((passisset() == 0) && (input[3] == ' ')) {
 		UART_data_write_string("password is currently null, setting to ");
@@ -158,14 +149,13 @@ void set_step_1(const char* input) {
 	} else if ((passisset() == 0) && (input[3] == '\0')) {
 		UART_data_write_string("password null, no new password provided\r\n");
 		UART_data_write_string("transitioning into password change state\r\n");
-		password_state = 1;
 	} else if (passisset() == 0) {
 		UART_data_write_string("command not recognized\r\n");
 	} else if ((input[3] == ' ') && checkpass(input + 4)) {
 
 		UART_data_write_string("old password matches\r\n");
 		UART_data_write_string("transitioning into password change state\r\n");
-		password_state = 1;
+		fetch_new_pass(input);
 		
 	} else if (input[3] == ' ') {
 		UART_data_write_string("password not recognized\r\n");
@@ -177,8 +167,9 @@ void set_step_1(const char* input) {
 	
 }
 
-void set_step_2(const char* input) {
-	
+void fetch_new_pass(char* input) {
+	UART_recv(input, 512);
+
 	if (strlen(input) != 0) {
 		UART_data_write_string("new password supplied, changing\r\n");
 		setpass(input);
@@ -188,5 +179,4 @@ void set_step_2(const char* input) {
 		unsetpass();
 		UART_data_write_string("password reset\r\n");
 	}
-	password_state = 0;
 }

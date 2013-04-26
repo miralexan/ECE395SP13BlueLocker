@@ -15,9 +15,9 @@
 #endif
 
 void test(const char*);
-void set_step_2(const char*);
 void open(const char*);
 void close(const char*);
-void set_step_1(const char*);
+void set(char*);
+void fetch_new_pass(char*);
 
 #endif
