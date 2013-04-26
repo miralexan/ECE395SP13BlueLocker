@@ -12,6 +12,9 @@ char password_set;
  */
 void readpass() {
 	read_storage(&password_set, 1, 0);
+	UART_data_write_string("Read byte \"");
+	UART_data_write(password_set);
+	UART_data_write_string("\"\r\n");
 	read_storage(password, HASH_LENGTH, 1);
 }
 

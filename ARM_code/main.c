@@ -84,12 +84,13 @@ int main(){
  */
 void test(const char *input) {
 
-	write_storage("\02312342321323451678653421abcd\r\n", 32, 0);
+//	write_storage("\x00" "2312342321323451678653421abcd\r\n", 32, 0);
 
 	UART_data_write_string("The hash on the flash was reset.\r\n");
 	//if (strncmp(input + 4, " reset", 6) == 0) {
 		UART_data_write_string("The hash on the ARM was also reset.\r\n");
-		readpass();
+//		readpass();
+		unsetpass();
 	//}
 }
 
