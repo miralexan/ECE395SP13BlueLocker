@@ -28,10 +28,16 @@ int write_storage(const char* buff, const int length, const unsigned char addres
 	int start_page, end_page, start_len, end_len, send;
 	
 	start_page = end_page = start_len = end_len = send = 0;
-	
-	UART_data_write_string("First character to write is \"");
-	UART_data_write(buff[0]);
-	UART_data_write_string("\"");
+
+#ifdef __DEBUG_H__
+	#if DEBUG 
+	{	
+		UART_data_write_string("First character to write is \"");
+		UART_data_write(buff[0]);
+		UART_data_write_string("\"");
+	}
+	#endif
+#endif
 
 	if(length <= 0 || length > 256){
 		return -1;
