@@ -12,7 +12,13 @@ int read_storage(char* buff, const int length, const unsigned char address){
 	SPIO_send(cmd, length+2);
 	SPIO_recv(cmd,2);
 
-	UART_data_write_string("Now trying to receive...\r\n");
+#ifdef __DEBUG_H__
+	#if DEBUG 
+	{
+		UART_data_write_string("Now trying to receive...\r\n");
+	}
+	#endif
+#endif
 
 	return SPIO_recv(buff, length);
 }

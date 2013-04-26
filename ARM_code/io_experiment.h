@@ -10,7 +10,9 @@
 #include "hasher.h"
 #include "password.h"
 
-#define DEBUG 1
+#ifdef __DEBUG_H__
+	#include "debug.h"
+#endif
 
 void test(const char*);
 void set_step_2(const char*);

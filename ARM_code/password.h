@@ -6,8 +6,6 @@
 #include "string.h"
 #include "storage.h"
 
-#define DEBUG 1
-
 void readpass(void);
 void setpass(const char*);
 int checkpass(const char*);

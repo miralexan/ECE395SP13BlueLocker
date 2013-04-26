@@ -5,7 +5,9 @@
 #include "uart.h"
 #include "string.h"
 
-#define DEBUG 1
+#ifdef __DEBUG_H__
+	#include "debug.h"
+#endif
 
 #define HASH_LENGTH 20
 

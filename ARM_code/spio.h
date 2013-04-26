@@ -3,7 +3,6 @@
 
 #include "LPC11xx.h"
 #include "string.h"
-#include "uart.h"
 
 #define SPIO_TFE() (LPC_SSP0->SR & 0x01)
 #define SPIO_TNF() (LPC_SSP0->SR & 0x02)

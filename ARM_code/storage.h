@@ -4,6 +4,10 @@
 #include "spio.h"
 #include "uart.h"
 
+#ifdef __DEBUG_H__
+	#include "debug.h"
+#endif
+
 #define CMD_READ 0x03
 #define CMD_WRITE 0x02
 #define CMD_WRDI 0x04
