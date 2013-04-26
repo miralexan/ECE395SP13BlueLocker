@@ -8,7 +8,6 @@
 
 #include "LPC11xx.h"
 #include "string.h"
-#include "flags.h"
 #include "gpio.h"
 
 extern int UART_done;
