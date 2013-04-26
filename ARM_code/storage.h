@@ -2,7 +2,11 @@
 #define __STORAGE_H__
 
 #include "spio.h"
-#include "debug.h"
+
+#ifdef __DEBUG_H__
+	#include "debug.h"
+	#include "uart.h"
+#endif
 
 typedef struct device_t device;
 

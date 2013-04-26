@@ -1,6 +1,5 @@
 #include "io_experiment.h"
 
-int password_state;
 device flash;
 device uart;
 
@@ -34,43 +33,35 @@ int main(){
 	lpc_init();
 	dinit(&flash, FLASH);
 	dinit(&uart, UART);
-	password_state = 0;
 
 	readpass();
 
 	while(1){
 		dread(&uart, input, 512, 0);
-		
-		if (password_state == 1) {
-			set_step_2(input);
-		} else {
-			
-			/* test */
-			if (strncmp(input, "test", 4) == 0) {
-				test(input);
-			}
+					
+		/* test */
+		if (strncmp(input, "test", 4) == 0) {
+			test(input);
+		}
 
-			/* open [password] */
-			else if (strncmp(input, "open", 4) == 0) { 
-				open(input);
-			}
+		/* open [password] */
+		else if (strncmp(input, "open", 4) == 0) { 
+			open(input);
+		}
 
-			/* close [password]	*/
-			else if (strncmp(input, "close", 5) == 0) {
-				close(input);
-			}
+		/* close [password]	*/
+		else if (strncmp(input, "close", 5) == 0) {
+			close(input);
+		}
 
-			/* set oldpass[\r\nnewpass]
-			 * set [newpass] <- if password is unset
-			 * oldpass is a paramater iff a password is currently set*/
-
-			else if (strncmp(input, "set", 3) == 0) {
-				set_step_1(input);
-			}
-			
-			else {
+		/* set oldpass[\r\nnewpass]
+		 * set [newpass] <- if password is unset
+		 * oldpass is a paramater iff a password is currently set*/
+		else if (strncmp(input, "set", 3) == 0) {
+			set(input);
+		}
+		else {
 				dwrite_string(&uart, "command not recognized\r\n", 0);
-			}
 		}
 		
 		UART_interrupt_enable();
@@ -87,13 +78,9 @@ int main(){
  *   resets any previously set password in storage
  */
 void test(const char *input) {
-	write_storage(&flash, "\02312342321323451678653421abcd\r\n", 32, 0);
-
 	dwrite_string(&uart, "The hash on the flash was reset.\r\n", 0);
-//	if (strncmp(input + 4, " reset", 6) == 0) {
-		dwrite_string(&uart, "The hash on the ARM was also reset.\r\n", 0);
-		readpass();
-//	}
+	dwrite_string(&uart, "The hash on the ARM was also reset.\r\n", 0);
+	unsetpass();
 }
 
 /* open
@@ -152,7 +139,7 @@ void close(const char* input) {
 	
 }
 
-void set_step_1(const char* input) {
+void set(char* input) {
 	
 	if ((passisset() == 0) && (input[3] == ' ')) {
 		dwrite_string(&uart, "password is currently null, setting to ", 0);
@@ -163,14 +150,13 @@ void set_step_1(const char* input) {
 	} else if ((passisset() == 0) && (input[3] == '\0')) {
 		dwrite_string(&uart, "password null, no new password provided\r\n", 0);
 		dwrite_string(&uart, "transitioning into password change state\r\n", 0);
-		password_state = 1;
 	} else if (passisset() == 0) {
 		dwrite_string(&uart, "command not recognized\r\n", 0);
 	} else if ((input[3] == ' ') && checkpass(input + 4)) {
 
 		dwrite_string(&uart, "old password matches\r\n", 0);
 		dwrite_string(&uart, "transitioning into password change state\r\n", 0);
-		password_state = 1;
+		fetch_new_pass(input);
 		
 	} else if (input[3] == ' ') {
 		dwrite_string(&uart, "password not recognized\r\n", 0);
@@ -182,8 +168,10 @@ void set_step_1(const char* input) {
 	
 }
 
-void set_step_2(const char* input) {
-	
+void fetch_new_pass(char* input) {
+	UART_interrupt_enable();
+	dread(&uart, input, 512, 0);
+
 	if (strlen(input) != 0) {
 		dwrite_string(&uart, "new password supplied, changing\r\n", 0);
 		setpass(input);
@@ -193,5 +181,4 @@ void set_step_2(const char* input) {
 		unsetpass();
 		dwrite_string(&uart, "password reset\r\n", 0);
 	}
-	password_state = 0;
 }

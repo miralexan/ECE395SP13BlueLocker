@@ -3,7 +3,6 @@
 
 #include "LPC11xx.h"
 #include "string.h"
-#include "debug.h"
 
 typedef struct device_t device;
 

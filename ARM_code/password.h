@@ -4,7 +4,6 @@
 #include "hasher.h"
 #include "string.h"
 #include "device.h"
-#include "debug.h"
 
 void readpass(void);
 void setpass(const char*);

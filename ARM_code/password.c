@@ -6,13 +6,7 @@ char password_set;
 extern device flash;
 
 void readpass() {
-
 	read_storage(&flash, &password_set, 1, 0);
-	if (password_set == 1) {
-		password_set = 1;
-	} else {
-		password_set = 0;
-	}
 	read_storage(&flash, password, HASH_LENGTH, 1);
 }
 

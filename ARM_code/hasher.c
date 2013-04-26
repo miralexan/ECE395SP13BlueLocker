@@ -27,13 +27,15 @@ int checkhash(const char *string, char *pass_hash) {
 
 //	setpass(string, string_hash);
 
-#if DEBUG
+#ifdef __DEBUG_H__ 
+	#if DEBUG
 	{
 		UART_data_write_nstring(pass_hash, HASH_LENGTH);
 		UART_data_write_string("\r\n");
 		UART_data_write_nstring((char*) string_hash.Message_Digest, HASH_LENGTH);
 		UART_data_write_string("\r\n");
 	}
+	#endif
 #endif
 
 	if (strncmp((char*)string_hash.Message_Digest, pass_hash, HASH_LENGTH) != 0) { 
