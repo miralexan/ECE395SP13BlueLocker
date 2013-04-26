@@ -51,6 +51,14 @@ void SPIO_enable(void){
 	}	
 }
 
+/* SPIO_send
+ * Inputs:
+ *   buf - A pointer to a character buffer to transmit.
+ *   size - The size of the buffer to be sent
+ * Outputs:
+ *   Returns the number of bytes sent.
+ * Side-Effects: None
+ */
 int SPIO_send(const char* buf, const int size){
 	int i = 0;
 
@@ -83,6 +91,14 @@ int SPIO_send(const char* buf, const int size){
 	return 0;
 }
 
+/* SPIO_recv
+ * Inputs:
+ *   length - The number of characters to receive.
+ * Outputs:
+ *   buf - A pointer to a character buffer to collect input.
+ *   Returns the number of bytes received.
+ * Side-Effects: None
+ */
 int SPIO_recv(char* buf, const int length){
 	int to_read = 0;
 	int buff_size = ((SPIO_index >= SPIO_read) ? (SPIO_index) : (512 + SPIO_index)) - SPIO_read;
@@ -99,6 +115,12 @@ int SPIO_recv(char* buf, const int length){
  	return to_read;
 }
 
+/* SPIO_flush
+ * Inputs: None
+ * Outputs:	None
+ * Side-Effects:
+ *   Clears the SPIO buffer.
+ */
 void SPIO_flush(void){
 	SPIO_read = SPIO_index;
 }

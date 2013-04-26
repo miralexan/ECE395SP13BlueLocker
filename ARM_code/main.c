@@ -139,6 +139,14 @@ void close(const char* input) {
 	
 }
 
+/* set
+ * parameters - 
+ *   input - The input string received from the user.
+ * outputs - 
+ *   none
+ * side-effects - 
+ *   Changes the password on the device, both in memory and in storage
+ */
 void set(char* input) {
 	
 	if ((passisset() == 0) && (input[3] == ' ')) {
@@ -168,6 +176,14 @@ void set(char* input) {
 	
 }
 
+/* fetch_new_pass
+ * parameters - 
+ *   input - A scratch buffer used to recieve input
+ * outputs - 
+ *   none
+ * side-effects - 
+ *   Changes the password on the device, both in memory and in storage
+ */
 void fetch_new_pass(char* input) {
 	UART_interrupt_enable();
 	UART_recv(input, 512);
