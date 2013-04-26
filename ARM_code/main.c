@@ -169,6 +169,7 @@ void set(char* input) {
 }
 
 void fetch_new_pass(char* input) {
+	UART_interrupt_enable();
 	UART_recv(input, 512);
 
 	if (strlen(input) != 0) {
