@@ -31,8 +31,8 @@ public class BluetoothService {
 
 	// Unique UUID for this application
 	private static final UUID MY_UUID_SECURE = UUID
-			.fromString("00001101-0000-1000-8000-00805F9B34FB");//"fa87c0d0-afac-11de-8a39-0800200c9a66");
-
+			.fromString("00001101-0000-1000-8000-00805F9B34FB");
+	
 	// Member fields
 	private final BluetoothAdapter mAdapter;
 	private final Handler mHandler;
@@ -43,12 +43,9 @@ public class BluetoothService {
 
 	// Constants that indicate the current connection state
 	public static final int STATE_NONE = 0; // we're doing nothing
-	public static final int STATE_LISTEN = 1; // now listening for incoming
-												// connections
-	public static final int STATE_CONNECTING = 2; // now initiating an outgoing
-													// connection
-	public static final int STATE_CONNECTED = 3; // now connected to a remote
-													// device
+	public static final int STATE_LISTEN = 1; // now listening for incoming connections
+	public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
+	public static final int STATE_CONNECTED = 3; // now connected to a remote device
 
 	/**
 	 * Constructor. Prepares a new Bluetooth session.
@@ -457,9 +454,11 @@ public class BluetoothService {
 			// Keep listening to the InputStream while connected
 			while (true) {
 				try {
+					// Clear buffer
 					byte[] buffer = new byte[1024];
 					// Read from the InputStream
 					bytes = mmInStream.read(buffer);
+					// Clone to prevent buffer corruption (only a pointer)
 					byte[] buf = buffer.clone();
 					
 					// Send the obtained bytes to the UI Activity

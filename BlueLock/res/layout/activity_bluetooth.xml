@@ -26,22 +26,21 @@
             android:layout_weight="1"
             android:text="@string/unlock" />
         
-        <Button
+        <!-- Remove this button for user use --><Button
             android:id="@+id/button_test"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Test" />
+            android:text="@string/test" />
 
-    </LinearLayout>
-
-    <Button
+    </LinearLayout><Button
         android:id="@+id/btnPassword"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:text="@string/setpw" />
 
+    <!-- Gone/Visible to close/open the change password menu -->
     <LinearLayout
         android:id="@+id/passwordLayout"
         android:layout_width="match_parent"
@@ -72,30 +71,6 @@
             android:layout_gravity="right"
             android:padding="5dp"
             android:text="@string/cancel" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" 
-        android:visibility="gone">
-
-        <EditText
-            android:id="@+id/edit_text_out"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_weight="1"
-            android:inputType="text" >
-
-            <requestFocus />
-        </EditText>
-
-        <Button
-            android:id="@+id/button_send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/send" />
     </LinearLayout>
 
 </LinearLayout>

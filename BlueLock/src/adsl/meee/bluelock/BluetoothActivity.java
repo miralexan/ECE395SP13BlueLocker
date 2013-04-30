@@ -16,7 +16,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -45,9 +44,6 @@ public class BluetoothActivity extends Activity {
 	private static final int REQUEST_ENABLE_BT = 3;
 
 	// Layout Views
-	//private ListView mConversationView;
-	private EditText mOutEditText;
-	private Button mSendButton;
 	private Button mLockButton;
 	private Button mUnlockButton;
 	private Button mSetButton;
@@ -55,6 +51,7 @@ public class BluetoothActivity extends Activity {
 	private EditText mNewPassword;
 	private Button mCancelButton;
 	
+	// Acts as input buffer to handle async communication
 	private String inMsg;
 	
 	// Used for storing the password
@@ -81,7 +78,7 @@ public class BluetoothActivity extends Activity {
 		
 		setRequestedOrientation(1);
 
-		// Restore preferences
+		// Load password from data
 		SharedPreferences saves = getSharedPreferences(PREFS_NAME, 0);
 		lockpw = saves.getString("lpw", "");
 		
@@ -138,30 +135,14 @@ public class BluetoothActivity extends Activity {
 
 	private void setup() {
 		Log.d(TAG, "setup()");
-
-		// Initialize the compose field with a listener for the return key
-		mOutEditText = (EditText) findViewById(R.id.edit_text_out);
-		mOutEditText.setOnEditorActionListener(mWriteListener);
-
-		// Initialize the send button with a listener that for click events
-		mSendButton = (Button) findViewById(R.id.button_send);
-		mSendButton.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				// Send a message using content of the edit text widget
-				TextView view = (TextView) findViewById(R.id.edit_text_out);
-				String message = view.getText().toString();
-				
-				message += "\r\n";
-				System.out.println(" WRITE: "+message);
-				sendMessage(message);
-			}
-		});
+		
 		// Lock button listener
 		mLockButton = (Button) findViewById(R.id.button_lock);
 		mLockButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				// Send a message using content of the edit text widget
 				String message;
+				// check if there is a set password
 				if(lockpw != null && !lockpw.contentEquals("")) {
 					message = "close " + lockpw + "\r\n";
 					System.out.println("SEND: close "+lockpw);
@@ -189,17 +170,19 @@ public class BluetoothActivity extends Activity {
 			}
 		});
 		
-		// Unlock button listener
+		// Test/Reset button listener
 		Button mTestButton = (Button) findViewById(R.id.button_test);
 		mTestButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				// Send a message using content of the edit text widget
+				// Reset the lock password -- remove from release
 				String message = "test reset\r\n";
 				System.out.println("SEND: test");
 				sendMessage(message);
 			}
 		});
 		
+		// display the "set password" view
 		mSetButton = (Button) findViewById(R.id.btnPassword);
 		mSetButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -208,6 +191,8 @@ public class BluetoothActivity extends Activity {
 			}
 		});
 		
+		// Change password, give old pw then change to new pw
+		// Does not catch bad passwords, handled in mHandler:MESSAGE_READ
 		mOldPassword = (EditText) findViewById(R.id.oldPassword);
 		mNewPassword = (EditText) findViewById(R.id.newPassword);
 		mNewPassword.setOnEditorActionListener(new OnEditorActionListener() {
@@ -218,19 +203,21 @@ public class BluetoothActivity extends Activity {
 				String oldPW = mOldPassword.getText().toString();
 				String newPW = mNewPassword.getText().toString();
 				
+				// Build string to be sent in 2 parts
 				String sendPWString;
+				// Don't set an old pw if none is provided
 				if(oldPW.isEmpty()) {
 					sendPWString = "set " + newPW + "\r\n";
 				} else {
 					sendPWString = "set " + oldPW + "\r\n" + newPW + "\r\n";
 				}
-				
+				// update stored password to new password
 				lockpw = newPW;
 				
 				System.out.println("SEND: "+sendPWString);
 				sendMessage(sendPWString);
 				
-
+				// Reset the visual fields for the passwords and hide them
 				findViewById(R.id.passwordLayout).setVisibility(View.GONE);
 				mSetButton.setVisibility(View.VISIBLE);
 				mOldPassword.setText("");
@@ -240,7 +227,7 @@ public class BluetoothActivity extends Activity {
 			}
 		});
 		
-		
+		// Don't set the password: clear pw fields and 'gone' the pw view
 		mCancelButton = (Button) findViewById(R.id.btnCancelPassword);
 		mCancelButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -270,8 +257,8 @@ public class BluetoothActivity extends Activity {
 		super.onStop();
 		if (D)
 			Log.e(TAG, "-- ON STOP --");
-		Toast.makeText(this, lockpw, Toast.LENGTH_SHORT)
-		.show();
+		//Toast.makeText(this, lockpw, Toast.LENGTH_SHORT).show();
+		// Store the password to memory
 		SharedPreferences saves = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = saves.edit();
 		editor.putString("lpw", lockpw);
@@ -286,18 +273,6 @@ public class BluetoothActivity extends Activity {
 			mService.stop();
 		if (D)
 			Log.e(TAG, "--- ON DESTROY ---");
-	}
-
-	private void ensureDiscoverable() {
-		if (D)
-			Log.d(TAG, "ensure discoverable");
-		if (mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-			Intent discoverableIntent = new Intent(
-					BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-			discoverableIntent.putExtra(
-					BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-			startActivity(discoverableIntent);
-		}
 	}
 
 	/**
@@ -322,26 +297,8 @@ public class BluetoothActivity extends Activity {
 
 			// Reset out string buffer to zero and clear the edit text field
 			mOutStringBuffer.setLength(0);
-			mOutEditText.setText(mOutStringBuffer);
 		}
 	}
-
-	// The action listener for the EditText widget, to listen for the return key
-	private TextView.OnEditorActionListener mWriteListener = new TextView.OnEditorActionListener() {
-		public boolean onEditorAction(TextView view, int actionId,
-				KeyEvent event) {
-			// If the action is a key-up event on the return key, send the
-			// message
-			if (actionId == EditorInfo.IME_NULL
-					&& event.getAction() == KeyEvent.ACTION_UP) {
-				String message = view.getText().toString();
-				sendMessage(message);
-			}
-			if (D)
-				Log.i(TAG, "END onEditorAction");
-			return true;
-		}
-	};
 
 	private final void setStatus(int resId) {
 		final ActionBar actionBar = getActionBar();
@@ -394,10 +351,11 @@ public class BluetoothActivity extends Activity {
 					inMsg = inMsg.substring(0,eol);
 					System.out.print(inMsg+'\n');
 					
+					// Define did not accept the password, so clear it
 					if(inMsg.contentEquals("\npassword not recognized\r")) {
 						System.out.println(inMsg.compareTo("password not recognized\r"));
 						Toast.makeText(getApplicationContext(), "Password is wrong. Clearing saved password.", Toast.LENGTH_SHORT).show();
-						lockpw = "";
+						lockpw = ""; // clear stored password
 					}
 					
 					//Toast.makeText(getApplicationContext(), inMsg, Toast.LENGTH_SHORT).show();
@@ -413,7 +371,9 @@ public class BluetoothActivity extends Activity {
 						"Connected to " + mConnectedDeviceName,
 						Toast.LENGTH_SHORT).show();
 				break;
+			
 			case MESSAGE_TOAST:
+				// Display a toast image
 				Toast.makeText(getApplicationContext(),
 						msg.getData().getString(TOAST), Toast.LENGTH_SHORT)
 						.show();
@@ -448,7 +408,7 @@ public class BluetoothActivity extends Activity {
 	}
 
 	private void connectDevice(Intent data, boolean secure) {
-		// Get the device MAC address
+		// Get the device's MAC address
 		String address = data.getExtras().getString(
 				DeviceListActivity.EXTRA_DEVICE_ADDRESS);
 		// Get the BluetoothDevice object
