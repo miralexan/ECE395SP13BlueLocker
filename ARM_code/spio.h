@@ -2,6 +2,7 @@
 #define __SPIO_H__
 
 #include "LPC11xx.h"
+#include "device.h"
 #include "string.h"
 
 /* SPIO_TFE
@@ -51,10 +52,10 @@
 
 void SPIO_enable(void);
 
-int SPIO_send(const char*, const int);
+int SPIO_send(device*, const char*, const int, const unsigned char);
 
-int SPIO_recv(char*, const int);
+int SPIO_recv(device*, char*, const int, const unsigned char);
 
-void SPIO_flush(void);
+int SPIO_flush(void);
 
 #endif

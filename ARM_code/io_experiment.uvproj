@@ -417,6 +417,11 @@
           <GroupName>Interface</GroupName>
           <Files>
             <File>
+              <FileName>debug.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\debug.h</FilePath>
+            </File>
+            <File>
               <FileName>gpio.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\gpio.h</FilePath>
@@ -472,9 +477,14 @@
               <FilePath>.\password.h</FilePath>
             </File>
             <File>
-              <FileName>debug.h</FileName>
+              <FileName>device.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\debug.h</FilePath>
+              <FilePath>.\device.h</FilePath>
+            </File>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\device.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -485,11 +495,6 @@
               <FileName>sha.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\sha.c</FilePath>
-            </File>
-            <File>
-              <FileName>shatest.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\shatest.c</FilePath>
             </File>
             <File>
               <FileName>sha1.c</FileName>

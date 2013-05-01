@@ -2,8 +2,8 @@
 #define HASHER_H
 
 #include "sha1.h"
-#include "uart.h"
 #include "string.h"
+#include "uart.h"
 
 #ifdef __DEBUG_H__
 	#include "debug.h"
