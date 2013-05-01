@@ -5,6 +5,8 @@ char UART_buffer[512];
 int UART_index = 0;
 int UART_read = 0;
 
+static func_t functions;
+
 void UART_enable(){
 
 	LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 16);	   /* Turn on IOCON Block */
@@ -40,6 +42,11 @@ void UART_enable(){
 
 	/* Enable Interrupts */
 	LPC_UART->IER |= 0x05;
+
+	functions.read = &UART_recv;
+	functions.write = &UART_send;
+	functions.flush = &UART_flush;
+	dadd("UART", &functions);
 }
 
 void UART_disable() {
@@ -77,28 +84,6 @@ void UART_data_write (const char c) {
 
   while (!(LPC_UART->LSR & 0x20));
   LPC_UART->THR = c;
-
-}
-
-void UART_data_write_string(const char *string) {
-	
-	int i;
-
-	for (i = 0; string[i] != '\0'; i++) {
-		while (!(LPC_UART->LSR & 0x20));
-		LPC_UART->THR = string[i];
-	}
-
-}
-
-void UART_data_write_nstring(const char *string, const int length) {
-	
-	int i;
-
-	for (i = 0; i < length ; i++) {
-		while (!(LPC_UART->LSR & 0x20));
-		LPC_UART->THR = string[i];
-	}
 
 }
 

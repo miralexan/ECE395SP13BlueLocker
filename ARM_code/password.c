@@ -6,15 +6,15 @@ char password_set;
 extern device flash;
 
 void readpass() {
-	read_storage(&flash, &password_set, 1, 0);
-	read_storage(&flash, password, HASH_LENGTH, 1);
+	dread(&flash, &password_set, 1, 0);
+	dread(&flash, password, HASH_LENGTH, 1);
 }
 
 void setpass(const char* pass_in) {
 	hashpass(pass_in, password);
 	password_set = 1;
-	write_storage(&flash, &password_set, 1, 0);
-	write_storage(&flash, password, HASH_LENGTH, 1);
+	dwrite(&flash, &password_set, 1, 0);
+	dwrite(&flash, password, HASH_LENGTH, 1);
 }
 
 int checkpass(const char *string) {
@@ -28,5 +28,5 @@ int passisset() {
 
 void unsetpass() {
 	password_set = 0;
-	write_storage(&flash, &password_set, 1, 0);
+	dwrite(&flash, &password_set, 1, 0);
 }

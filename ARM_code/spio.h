@@ -2,6 +2,7 @@
 #define __SPIO_H__
 
 #include "LPC11xx.h"
+#include "device.h"
 #include "string.h"
 
 typedef struct device_t device;

@@ -417,6 +417,11 @@
           <GroupName>Interface</GroupName>
           <Files>
             <File>
+              <FileName>debug.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\debug.h</FilePath>
+            </File>
+            <File>
               <FileName>gpio.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\gpio.h</FilePath>
@@ -470,11 +475,6 @@
               <FileName>password.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\password.h</FilePath>
-            </File>
-            <File>
-              <FileName>debug.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\debug.h</FilePath>
             </File>
             <File>
               <FileName>device.h</FileName>

@@ -2,6 +2,8 @@
 #define __STORAGE_H__
 
 #include "spio.h"
+#include "device.h"
+#include "string.h"
 
 #ifdef __DEBUG_H__
 	#include "debug.h"
@@ -22,6 +24,7 @@ typedef struct device_t device;
 #define STATUS_BP0 0x04
 #define STATUS_BP1 0x08
 
+void storage_init(void);
 int read_storage(device*, char*, const int, const unsigned char);
 int write_storage(device*, const char*, const int, const unsigned char);
 int storage_write_enable(void);

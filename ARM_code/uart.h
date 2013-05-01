@@ -9,6 +9,7 @@
 #include "LPC11xx.h"
 #include "string.h"
 #include "gpio.h"
+#include "device.h"
 
 typedef struct device_t device;
 
@@ -26,8 +27,6 @@ void UART_disable(void);
 int UART_recv(device*, char*, const int, const unsigned char);
 int UART_send(device*, const char *, const int, const unsigned char);
 void UART_data_write(const char c);
-void UART_data_write_string(const char *string);
-void UART_data_write_nstring(const char *string, const int length);
 int UART_flush(void);
 
 #endif

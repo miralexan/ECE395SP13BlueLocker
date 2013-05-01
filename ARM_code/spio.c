@@ -4,6 +4,8 @@ char SPIO_buff[512];
 int SPIO_read = 0;
 int SPIO_index = 0;
 
+static func_t functions;
+
 void SPIO_enable(void){
 	LPC_SYSCON->SYSAHBCLKCTRL |= (1UL << 16);
 
@@ -48,7 +50,12 @@ void SPIO_enable(void){
     // Empty any data in the receive FIFO
 	while(SPIO_RNE()){
 		int tmp = LPC_SSP0->DR;
-	}	
+	}
+	
+	functions.read = &SPIO_recv;
+	functions.write = &SPIO_send;
+	functions.flush = &SPIO_flush;
+	dadd("SPIO", &functions);	
 }
 
 int SPIO_send(device* device_h, const char* buf, const int size, const unsigned char garbage){

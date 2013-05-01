@@ -1,5 +1,6 @@
-
 #include "hasher.h"
+
+extern device uart;
 
 //#define PASS_SALT "This is a song that gets on everybody's nerves / on everybody's nerves / on everybody's nerves / \
 //This is a song that gets on everybody's nerves / and this is how it goes..."
@@ -21,22 +22,22 @@ int checkhash(const char *string, char *pass_hash) {
     SHA1Input(&string_hash, (const unsigned char *) string, strlen(string));
 
     if (!SHA1Result(&string_hash)) {
-        UART_data_write_string("ERROR-- could not compute message digest\r\n");
+        dwrite_string(&uart, "ERROR-- could not compute message digest\r\n", 0);
 		return 0; // false
     }
 
 //	setpass(string, string_hash);
 
-#ifdef __DEBUG_H__ 
+//#ifdef __DEBUG_H__ 
 	#if DEBUG
 	{
-		UART_data_write_nstring(pass_hash, HASH_LENGTH);
-		UART_data_write_string("\r\n");
-		UART_data_write_nstring((char*) string_hash.Message_Digest, HASH_LENGTH);
-		UART_data_write_string("\r\n");
+		dwrite(&uart, pass_hash, HASH_LENGTH, 0);
+		dwrite_string(&uart, "\r\n", 0);
+		dwrite(&uart, (char*) string_hash.Message_Digest, HASH_LENGTH, 0);
+		dwrite_string(&uart, "\r\n", 0);
 	}
 	#endif
-#endif
+//#endif
 
 	if (strncmp((char*)string_hash.Message_Digest, pass_hash, HASH_LENGTH) != 0) { 
 		return 0; // false

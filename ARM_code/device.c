@@ -1,52 +1,70 @@
 #include "device.h"
 
-int dinit(device* device_h, const int type){
-	device_h->flags = 0;
+char designations[5][6] = {{"\0\0\0\0\0\0"},
+						  {"\0\0\0\0\0\0"},
+						  {"\0\0\0\0\0\0"},
+						  {"\0\0\0\0\0\0"},
+						  {"\0\0\0\0\0\0"}};
+func_t* ops[5];
 
-	switch(type){
-	 	case UART:  device_h->read = &UART_recv;
-				    device_h->write = &UART_send;
-				    device_h->flush = &UART_flush;
-				    break;
-		case SPIO:  device_h->read = &SPIO_recv;
-				    device_h->write = &SPIO_send;
-				    device_h->flush = &SPIO_flush;
-				    break;
-		case FLASH: device_h->read = &read_storage;
-				    device_h->write = &write_storage;
-				    device_h->flush = &SPIO_flush;
-				    break;
-		default:	return -1;
+int dadd(const char* name, func_t* operations){
+	int i = 0;
+	while(1){
+		if(i >= 5){
+		 	return -1;
+		} else if(designations[i][0] == '\0'){
+			strcpy(designations[i], name);
+			ops[i] = operations;
+			break;
+		} 
+
+		i++;
 	}
+
 	return 0;
 }
 
+int dinit(device* device_h, const char* type){
+	int i = 0;	
+
+	device_h->flags = 0;
+
+	for(i = 0; i < 5; i++){
+		if(strcmp(type, designations[i]) == 0){
+			device_h->function = ops[i];
+			return 0;
+		}
+	}
+
+	return -1;
+}
+
 int dread(device* device_h, char* buff, const int length, const unsigned char address){
-	if(device_h->read == 0){
+	if(device_h->function->read == 0){
 		return -1;
 	}
 
-	return device_h->read(device_h, buff, length, address);
+	return device_h->function->read(device_h, buff, length, address);
 }
 
 int dwrite(device* device_h, const char* buff, const int length, const unsigned char address){
-	if(device_h->write == 0){
+	if(device_h->function->write == 0){
 		return -1;
 	}
 
- 	return device_h->write(device_h, buff, length, address);
+ 	return device_h->function->write(device_h, buff, length, address);
 }
 
 int dwrite_string(device* device_h, const char* string, const unsigned char address){
-	if(device_h->write == 0){
+	if(device_h->function->write == 0){
 		return -1;
 	}
 
- 	return device_h->write(device_h, string, strlen(string), address);
+ 	return device_h->function->write(device_h, string, strlen(string), address);
 }
 
 int dflush(device* device_h){
-	return device_h->flush();
+	return device_h->function->flush();
 }
 
 void dclear(device* device_h){

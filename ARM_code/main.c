@@ -11,6 +11,8 @@ void lpc_init(){
 	// Enable Synchronous Serial block
 	SPIO_enable();
 
+	storage_init();
+
 	// Set I/O0 port 7 to output (solenoid control/open indicator)
 	GPIO0_dir_output(GPIO_P7);
 	// Set I/O0 port 4 to output (closed indicator)
@@ -31,8 +33,8 @@ int main(){
 	char input[512];
 
 	lpc_init();
-	dinit(&flash, FLASH);
-	dinit(&uart, UART);
+	dinit(&flash, "FLASH");
+	dinit(&uart, "UART");
 
 	readpass();
 

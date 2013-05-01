@@ -1,5 +1,14 @@
 #include "storage.h"
-#include "string.h"
+
+extern device uart;
+static func_t functions;
+
+void storage_init(){
+	functions.read = &read_storage;
+	functions.write = &write_storage;
+	functions.flush = &SPIO_flush;
+	dadd("FLASH", &functions);
+}
 
 int read_storage(device* device_h, char* buff, const int length, const unsigned char address){
 	char cmd[258];
@@ -15,7 +24,7 @@ int read_storage(device* device_h, char* buff, const int length, const unsigned 
 #ifdef __DEBUG_H__
 	#if DEBUG 
 	{
-		UART_data_write_string("Now trying to receive...\r\n");
+	dwrite_string(&uart, "Now trying to receive...\r\n", 0);
 	}
 	#endif
 #endif
@@ -32,9 +41,9 @@ int write_storage(device* device_h, const char* buff, const int length, const un
 #ifdef __DEBUG_H__
 	#if DEBUG 
 	{	
-		UART_data_write_string("First character to write is \"");
-		UART_data_write(buff[0]);
-		UART_data_write_string("\"");
+		dwrite_string(&uart, "First character to write is \"", 0);
+		dwrite(&uart, buff[0], 1, 0);
+		dwrite_string(&uart, "\"", 0);
 	}
 	#endif
 #endif
