@@ -21,12 +21,10 @@ int read_storage(device* device_h, char* buff, const int length, const unsigned 
 	SPIO_send(device_h, cmd, length+2, 0);
 	SPIO_recv(device_h, cmd,2, 0);
 
-#ifdef __DEBUG_H__
-	#if DEBUG 
+#if DEBUG 
 	{
 	dwrite_string(&uart, "Now trying to receive...\r\n", 0);
 	}
-	#endif
 #endif
 
 	return SPIO_recv(device_h, buff, length, 0);

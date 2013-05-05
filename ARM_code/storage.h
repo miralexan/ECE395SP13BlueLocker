@@ -4,10 +4,7 @@
 #include "spio.h"
 #include "device.h"
 #include "string.h"
-
-#ifdef __DEBUG_H__
-	#include "debug.h"
-#endif
+#include "debug.h"
 
 #define CMD_READ 0x03
 #define CMD_WRITE 0x02

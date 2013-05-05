@@ -4,10 +4,7 @@
 #include "sha1.h"
 #include "string.h"
 #include "uart.h"
-
-#ifdef __DEBUG_H__
-	#include "debug.h"
-#endif
+#include "debug.h"
 
 #define HASH_LENGTH 20
 
