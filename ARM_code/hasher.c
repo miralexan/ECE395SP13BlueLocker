@@ -1,3 +1,9 @@
+/* hasher.c
+ * Written by Ethan Trovillion and Ethan Warth
+ * Part of the BlueLock project
+ * ECE 395 Spring 2013
+ * University of Illinois Urbana-Champaign
+ */
 #include "hasher.h"
 
 #if DEBUG

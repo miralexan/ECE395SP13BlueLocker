@@ -1,3 +1,9 @@
+/* bluelock.h
+ * Written by Ethan Trovillion and Ethan Warth
+ * Part of the BlueLock project
+ * ECE 395 Spring 2013
+ * University of Illinois Urbana-Champaign
+ */
 #ifndef __IO_EXPERIMENT_H__
 #define	__IO_EXPERIMENT_H__
 #include "LPC11xx.h"

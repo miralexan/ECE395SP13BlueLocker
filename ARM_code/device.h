@@ -1,3 +1,9 @@
+/* device.h
+ * Written by Ethan Trovillion and Ethan Warth
+ * Part of the BlueLock project
+ * ECE 395 Spring 2013
+ * University of Illinois Urbana-Champaign
+ */
 #ifndef __DEVICE_H__
 #define __DEVICE_H__
 #include "string.h"
