@@ -4,11 +4,14 @@
 
 typedef struct device_t device;
 
+// Structure defining read/write/flush functions for peripherals
 typedef struct func_t{
 	int (*read)(device*, char*, const int, const unsigned char);
 	int (*write)(device*, const char*, const int, const unsigned char);
 	int (*flush)();
 } func_t;
+
+// Interface for peripherals, contains status flags
 struct device_t{
 	char flags;
 	func_t* function;

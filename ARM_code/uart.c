@@ -56,9 +56,18 @@ void UART_disable() {
 
 }
 
-/*----------------------------------------------------------------------------
-  Write character to Serial Port
- *----------------------------------------------------------------------------*/
+/* UART_recv
+ * Inputs:
+ *   device_h - a pointer to a device structure
+ *   buff - A pointer to a character buffer to collect input
+ *   length - The number of characters to receive.
+ *   garbage - unused
+ * Outputs:
+ *   Returns the number of bytes received.
+ * Side-Effects:
+ *   Blocks until the UART_done flag is set. Clears the UART_done flag
+ *   before returning.
+ */
 int UART_recv(device* device_h, char* buff, const int length, const unsigned char garbage){
 	int to_read = 0;
 	int buff_size;
@@ -80,6 +89,12 @@ int UART_recv(device* device_h, char* buff, const int length, const unsigned cha
  	return to_read;
 }
 
+/* UART_data_write
+ * Inputs:
+ *   c - character to be transmitted
+ * Outputs: None
+ * Side-Effects: None
+ */
 void UART_data_write (const char c) {
 
   while (!(LPC_UART->LSR & 0x20));
@@ -87,6 +102,16 @@ void UART_data_write (const char c) {
 
 }
 
+/* UART_send
+ * Inputs:
+ *   device_h - a pointer to a device structure
+ *   string - A pointer to a character buffer to transmit.
+ *   length - The size of the buffer to be sent
+ *   garbage - unused
+ * Outputs:
+ *   Returns the number of bytes sent.
+ * Side-Effects: None
+ */
 int UART_send(device* device_h, const char *string, const int length, const unsigned char garbage) {
 	
 	int i;
@@ -98,10 +123,26 @@ int UART_send(device* device_h, const char *string, const int length, const unsi
 	return length;
 }
 
+/* UART_flush
+ * Inputs: None
+ * Outputs:	None
+ * Side-Effects:
+ *   Clears the SPIO buffer.
+ */
 int UART_flush(void){
+	UART_read = UART_index;
 	return 0;
 }
 
+/* UART_IRQHandler
+ * Inputs: None
+ * Outputs:	None
+ * Side-Effects:
+ *   Called when the UART peripheral issues an unmasked interrupt.
+ *   Pulls characters out of the UART device buffer and stores them
+ *   in UART_buffer. When the end-of-transmission sequence \r\n is detected,
+ *   sets the UART_done flag and masks interrupts.
+ */
 extern void UART_IRQHandler(){
 
 	UART_buffer[UART_index++] = UART_data_read();

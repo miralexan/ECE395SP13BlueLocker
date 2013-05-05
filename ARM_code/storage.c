@@ -1,6 +1,9 @@
 #include "storage.h"
 
-extern device uart;
+#if DEBUG
+{
+	extern device uart;
+}
 static func_t functions;
 
 void storage_init(){
@@ -10,6 +13,16 @@ void storage_init(){
 	dadd("FLASH", &functions);
 }
 
+/* read_storage
+ * Inputs:
+ *   device_h - A pointer to a device structure
+ *   buff - buffer to receive input
+ *   length - number of bytes to read
+ *   address - the address of the flash device to begin reading from
+ * Outputs:
+ *   Returns the number of bytes read
+ * Side-effects: None
+ */
 int read_storage(device* device_h, char* buff, const int length, const unsigned char address){
 	char cmd[258];
 
@@ -22,28 +35,37 @@ int read_storage(device* device_h, char* buff, const int length, const unsigned 
 	SPIO_recv(device_h, cmd,2, 0);
 
 #if DEBUG 
-	{
+{
 	dwrite_string(&uart, "Now trying to receive...\r\n", 0);
-	}
+}
 #endif
 
 	return SPIO_recv(device_h, buff, length, 0);
 }
 
+/* write_storage
+ * Inputs:
+ *   device_h - A pointer to a device structure
+ *   buff - buffer of data to write to flash storage
+ *   length - number of bytes to write
+ *   address - the address of the flash device to begin writing to
+ * Outputs:
+ *   Returns the number of bytes written
+ * Side-effects:
+ *   Stores data in the attached flash storage chip.
+ */
 int write_storage(device* device_h, const char* buff, const int length, const unsigned char address){
 	char cmd[18];
 	int start_page, end_page, start_len, end_len, send;
 	
 	start_page = end_page = start_len = end_len = send = 0;
 
-#ifdef __DEBUG_H__
-	#if DEBUG 
-	{	
-		dwrite_string(&uart, "First character to write is \"", 0);
-		dwrite(&uart, buff[0], 1, 0);
-		dwrite_string(&uart, "\"", 0);
-	}
-	#endif
+#if DEBUG 
+{	
+	dwrite_string(&uart, "First character to write is \"", 0);
+	dwrite(&uart, buff[0], 1, 0);
+	dwrite_string(&uart, "\"", 0);
+}
 #endif
 
 	if(length <= 0 || length > 256){
@@ -176,6 +198,14 @@ int write_storage(device* device_h, const char* buff, const int length, const un
 	return 0;
 }
 
+/* storage_read_status
+ * Inputs:
+ *   mask - bitmask controlling what status bits are checked
+ * Outputs:
+ *   Returns 0 if selected bit(s) are zero, non-zero if one or more
+ *   bits are set.
+ * Side-effects: None
+ */
 int storage_read_status(char mask){
 	char cmd[2];
 	
@@ -188,6 +218,13 @@ int storage_read_status(char mask){
 	return (int) cmd[0] & mask;
 }
 
+/* storage_write_enable
+ * Inputs: None
+ * Outputs:
+ *   Returns 0 on success, -1 on failure
+ * Side-effects: 
+ *   Enables writing to flash chip
+ */
 int storage_write_enable(void){
 
 	char cmd = CMD_WREN;

@@ -60,8 +60,10 @@ void SPIO_enable(void){
 
 /* SPIO_send
  * Inputs:
+ *   device_h - a pointer to a device structure
  *   buf - A pointer to a character buffer to transmit.
  *   size - The size of the buffer to be sent
+ *   garbage - unused
  * Outputs:
  *   Returns the number of bytes sent.
  * Side-Effects: None
@@ -100,9 +102,11 @@ int SPIO_send(device* device_h, const char* buf, const int size, const unsigned 
 
 /* SPIO_recv
  * Inputs:
+ *   device_h - a pointer to a device structure
+ *   buf - A pointer to a character buffer to collect input
  *   length - The number of characters to receive.
+ *   garbage - unused
  * Outputs:
- *   buf - A pointer to a character buffer to collect input.
  *   Returns the number of bytes received.
  * Side-Effects: None
  */
