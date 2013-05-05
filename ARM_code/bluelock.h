@@ -14,7 +14,10 @@
 #include "password.h"
 #include "debug.h"
 
+#if DEBUG
 void test(const char*);
+#endif
+
 void open(const char*);
 void close(const char*);
 void set(char*);

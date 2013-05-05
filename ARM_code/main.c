@@ -47,13 +47,9 @@ int main(){
 	while(1){
 		dread(&uart, input, 512, 0);
 					
-		/* test */
-		if (strncmp(input, "test", 4) == 0) {
-			test(input);
-		}
-
+		
 		/* open [password] */
-		else if (strncmp(input, "open", 4) == 0) { 
+		if (strncmp(input, "open", 4) == 0) { 
 			open(input);
 		}
 
@@ -68,6 +64,14 @@ int main(){
 		else if (strncmp(input, "set", 3) == 0) {
 			set(input);
 		}
+		
+#if DEBUG		
+		/* test */
+		else if (strncmp(input, "test", 4) == 0) {
+			test(input);
+		}
+#endif
+
 		else {
 				dwrite_string(&uart, "command not recognized\r\n", 0);
 		}
@@ -85,11 +89,13 @@ int main(){
  * side-effects - 
  *   resets any previously set password in storage
  */
+#if DEBUG
 void test(const char *input) {
 	dwrite_string(&uart, "The hash on the flash was reset.\r\n", 0);
 	dwrite_string(&uart, "The hash on the ARM was also reset.\r\n", 0);
 	unsetpass();
 }
+#endif
 
 /* open
  * parameters - 
