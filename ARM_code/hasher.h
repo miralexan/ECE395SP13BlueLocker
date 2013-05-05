@@ -3,12 +3,15 @@
 
 #include "sha1.h"
 #include "string.h"
-#include "uart.h"
 #include "debug.h"
+
+#if DEBUG
+	#include "device.h"
+#endif
 
 #define HASH_LENGTH 20
 
-void hashpass(const char*, char*);
+int hashpass(const char*, char*);
 int checkhash(const char*, char*);
 
 #endif // HASHER_H\
