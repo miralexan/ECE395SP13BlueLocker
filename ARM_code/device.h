@@ -18,6 +18,9 @@ typedef struct func_t{
 } func_t;
 
 // Interface for peripherals, contains status flags
+// This was intended to provide additional context for return values
+// (ie, why an error was thrown or fewer bytes where read/written than
+//  expected), however we ran out of time before fully implementing it.
 struct device_t{
 	char flags;
 	func_t* function;

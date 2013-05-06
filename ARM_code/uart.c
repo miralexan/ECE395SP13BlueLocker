@@ -73,11 +73,15 @@ void UART_disable() {
  * Side-Effects:
  *   Blocks until the UART_done flag is set. Clears the UART_done flag
  *   before returning.
+ * Notes:
+ *   UART_buffer is implemented as a circular buffer, which is why the start/stop points
+ *   and buff_size calculations are so involved.
  */
 int UART_recv(device* device_h, char* buff, const int length, const unsigned char garbage){
 	int to_read = 0;
 	int buff_size;
 
+	// Block until read is complete (device receives a \r\n sequence)
 	while(!UART_done);
 
 	buff_size = ((UART_index > UART_read) ? (UART_index) : (512 + UART_index)) - UART_read;	
@@ -102,7 +106,7 @@ int UART_recv(device* device_h, char* buff, const int length, const unsigned cha
  * Side-Effects: None
  */
 void UART_data_write (const char c) {
-
+  // wait for space in the transmit FIFO to become available
   while (!(LPC_UART->LSR & 0x20));
   LPC_UART->THR = c;
 

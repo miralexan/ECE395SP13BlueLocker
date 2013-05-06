@@ -115,6 +115,9 @@ int SPIO_send(device* device_h, const char* buf, const int size, const unsigned 
  * Outputs:
  *   Returns the number of bytes received.
  * Side-Effects: None
+ * Notes:
+ *   SPIO_buff is implemented as a circular buffer, which is why the start/stop points
+ *   and buff_size calculations are so involved.
  */
 int SPIO_recv(device* device_h, char* buf, const int length, const unsigned char garbage){
 	int to_read = 0;
