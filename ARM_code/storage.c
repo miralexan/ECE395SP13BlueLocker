@@ -1,6 +1,15 @@
+/* storage.c
+ * Written by Ethan Trovillion and Ethan Warth
+ * Part of the BlueLock project
+ * ECE 395 Spring 2013
+ * University of Illinois Urbana-Champaign
+ */
 #include "storage.h"
 
-extern device uart;
+#if DEBUG
+{
+	extern device uart;
+}
 static func_t functions;
 
 void storage_init(){
@@ -10,6 +19,22 @@ void storage_init(){
 	dadd("FLASH", &functions);
 }
 
+/* read_storage
+ * Inputs:
+ *   device_h - A pointer to a device structure
+ *   buff - buffer to receive input
+ *   length - number of bytes to read
+ *   address - the address of the flash device to begin reading from
+ * Outputs:
+ *   Returns the number of bytes read
+ * Side-effects: None
+ * Notes:
+ *   The flash interface for reading is [READ_CMD ADDRESS byte0...byteN]
+ *   Because of the way SPI works, you must write as many bytes as you
+ *   expect to read in order to keep the clock running. All bytes after
+ *   ADDRESS are ignored by the flash chip. Similarly, the first two bytes
+ *   returned are garbage.
+ */
 int read_storage(device* device_h, char* buff, const int length, const unsigned char address){
 	char cmd[258];
 
@@ -21,31 +46,51 @@ int read_storage(device* device_h, char* buff, const int length, const unsigned 
 	SPIO_send(device_h, cmd, length+2, 0);
 	SPIO_recv(device_h, cmd,2, 0);
 
-#ifdef __DEBUG_H__
-	#if DEBUG 
-	{
+#if DEBUG 
+{
 	dwrite_string(&uart, "Now trying to receive...\r\n", 0);
-	}
-	#endif
+}
 #endif
 
 	return SPIO_recv(device_h, buff, length, 0);
 }
 
+/* write_storage
+ * Inputs:
+ *   device_h - A pointer to a device structure
+ *   buff - buffer of data to write to flash storage
+ *   length - number of bytes to write
+ *   address - the address of the flash device to begin writing to
+ * Outputs:
+ *   Returns the number of bytes written, or -1 on error
+ * Side-effects:
+ *   Stores data in the attached flash storage chip. Clobbers the SPI buffer.
+ * Notes:
+ *   The flash interface for writing is [WRITE_CMD ADDRESS DATA0...DATAn].
+ *   All data returned by the SPI interface during a write is garbage.
+ *   The flash storage chip is divided into 16 16-byte pages. Writes cannot
+ *   cross a page boundary, and the chip becomes inaccessible (except for the
+ *   status register) while it commits its internal receive buffer to non-volitile 
+ *   storage. Therefore, when writing one must A) identify where page boundaries occur
+ *   based on starting address and write length; and B) poll the device to determine
+ *   when a write-cycle is finished before continuing.
+ */
 int write_storage(device* device_h, const char* buff, const int length, const unsigned char address){
 	char cmd[18];
-	int start_page, end_page, start_len, end_len, send;
+	int start_page,  // The page a write begins in
+	    end_page,    // The page a write ends in
+		start_len,   // The number of bytes to be written to the start_page
+		end_len,     // The number of bytes to be written to the end_page
+		send;        // number of bytes to be written on any given page
 	
 	start_page = end_page = start_len = end_len = send = 0;
 
-#ifdef __DEBUG_H__
-	#if DEBUG 
-	{	
-		dwrite_string(&uart, "First character to write is \"", 0);
-		dwrite(&uart, buff[0], 1, 0);
-		dwrite_string(&uart, "\"", 0);
-	}
-	#endif
+#if DEBUG 
+{	
+	dwrite_string(&uart, "First character to write is \"", 0);
+	dwrite(&uart, buff[0], 1, 0);
+	dwrite_string(&uart, "\"", 0);
+}
 #endif
 
 	if(length <= 0 || length > 256){
@@ -59,6 +104,14 @@ int write_storage(device* device_h, const char* buff, const int length, const un
 	start_len = (start_page+1)*16-address;
 	end_len = (address + length) - (end_page * 16);
 
+	// Unrolled write loop for speed.
+	// Beginning and ending pages are special cases with regards
+	// to the number of bytes written; all intervening pages will
+	// have a full 16 bytes written.
+	// Pages are written last to first.
+	// Each stage calculates the address to begin writing to, enables writing,
+	// sends the data, flushes the garbage-filled SPI buffer, and waits
+	// for the write cycle to finish.
 	cmd[0] = (char) CMD_WRITE;
 	send = end_len;
 	switch(end_page - start_page){
@@ -178,6 +231,14 @@ int write_storage(device* device_h, const char* buff, const int length, const un
 	return 0;
 }
 
+/* storage_read_status
+ * Inputs:
+ *   mask - bitmask controlling what status bits are checked
+ * Outputs:
+ *   Returns 0 if selected bit(s) are zero, non-zero if one or more
+ *   bits are set.
+ * Side-effects: None
+ */
 int storage_read_status(char mask){
 	char cmd[2];
 	
@@ -190,6 +251,13 @@ int storage_read_status(char mask){
 	return (int) cmd[0] & mask;
 }
 
+/* storage_write_enable
+ * Inputs: None
+ * Outputs:
+ *   Returns 0 on success, -1 on failure
+ * Side-effects: 
+ *   Enables writing to flash chip
+ */
 int storage_write_enable(void){
 
 	char cmd = CMD_WREN;
@@ -197,6 +265,6 @@ int storage_write_enable(void){
 	SPIO_send(NULL, &cmd, 1, 0);
 	SPIO_flush();
 	
-	// TODO: ensure write enable latch is clear
+	// TODO: ensure write enable latch is set
 	return 0;
 }

@@ -1,3 +1,9 @@
+/* hasher.c
+ * Written by Ethan Trovillion and Ethan Warth
+ * Part of the BlueLock project
+ * ECE 395 Spring 2013
+ * University of Illinois Urbana-Champaign
+ */
 #include "hasher.h"
 
 extern device uart;
@@ -28,16 +34,14 @@ int checkhash(const char *string, char *pass_hash) {
 
 //	setpass(string, string_hash);
 
-//#ifdef __DEBUG_H__ 
-	#if DEBUG
+#if DEBUG
 	{
 		dwrite(&uart, pass_hash, HASH_LENGTH, 0);
 		dwrite_string(&uart, "\r\n", 0);
 		dwrite(&uart, (char*) string_hash.Message_Digest, HASH_LENGTH, 0);
 		dwrite_string(&uart, "\r\n", 0);
 	}
-	#endif
-//#endif
+#endif
 
 	if (strncmp((char*)string_hash.Message_Digest, pass_hash, HASH_LENGTH) != 0) { 
 		return 0; // false

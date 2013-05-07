@@ -1,3 +1,9 @@
+/* spio.c
+ * Written by Ethan Trovillion and Ethan Warth
+ * Part of the BlueLock project
+ * ECE 395 Spring 2013
+ * University of Illinois Urbana-Champaign
+ */
 #include "spio.h"
 
 char SPIO_buff[512];
@@ -60,8 +66,10 @@ void SPIO_enable(void){
 
 /* SPIO_send
  * Inputs:
+ *   device_h - a pointer to a device structure
  *   buf - A pointer to a character buffer to transmit.
  *   size - The size of the buffer to be sent
+ *   garbage - unused
  * Outputs:
  *   Returns the number of bytes sent.
  * Side-Effects: None
@@ -100,11 +108,16 @@ int SPIO_send(device* device_h, const char* buf, const int size, const unsigned 
 
 /* SPIO_recv
  * Inputs:
+ *   device_h - a pointer to a device structure
+ *   buf - A pointer to a character buffer to collect input
  *   length - The number of characters to receive.
+ *   garbage - unused
  * Outputs:
- *   buf - A pointer to a character buffer to collect input.
  *   Returns the number of bytes received.
  * Side-Effects: None
+ * Notes:
+ *   SPIO_buff is implemented as a circular buffer, which is why the start/stop points
+ *   and buff_size calculations are so involved.
  */
 int SPIO_recv(device* device_h, char* buf, const int length, const unsigned char garbage){
 	int to_read = 0;

@@ -1,8 +1,9 @@
 /* uart.h
- * 
- * provides an abstract interface to the UART device (in this case, bluetooth)
+ * Written by Ethan Trovillion and Ethan Warth
+ * Part of the BlueLock project
+ * ECE 395 Spring 2013
+ * University of Illinois Urbana-Champaign
  */
-
 #ifndef __UART_H__
 #define __UART_H__
 

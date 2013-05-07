@@ -1,13 +1,16 @@
+/* hasher.h
+ * Written by Ethan Trovillion and Ethan Warth
+ * Part of the BlueLock project
+ * ECE 395 Spring 2013
+ * University of Illinois Urbana-Champaign
+ */
 #ifndef HASHER_H
 #define HASHER_H
 
 #include "sha1.h"
 #include "string.h"
 #include "uart.h"
-
-#ifdef __DEBUG_H__
-	#include "debug.h"
-#endif
+#include "debug.h"
 
 #define HASH_LENGTH 20
 

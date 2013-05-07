@@ -1,13 +1,16 @@
+/* storage.h
+ * Written by Ethan Trovillion and Ethan Warth
+ * Part of the BlueLock project
+ * ECE 395 Spring 2013
+ * University of Illinois Urbana-Champaign
+ */
 #ifndef __STORAGE_H__
 #define __STORAGE_H__
 
 #include "spio.h"
 #include "device.h"
 #include "string.h"
-
-#ifdef __DEBUG_H__
-	#include "debug.h"
-#endif
+#include "debug.h"
 
 #define CMD_READ 0x03
 #define CMD_WRITE 0x02
